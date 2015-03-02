@@ -26,7 +26,7 @@ class Listener implements KeyListener{
 		return otherKey;
 	}
 	
-	@Override
+	//@Override
 	public void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
 		if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd'){
@@ -37,7 +37,7 @@ class Listener implements KeyListener{
 
 	}
 
-	@Override
+	//@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd'){
 			if(!isHolding)
@@ -48,7 +48,7 @@ class Listener implements KeyListener{
 			otherKey = '?';
 	}
 
-	@Override
+	//@Override
 	public void keyTyped(KeyEvent e) {}
 
 }

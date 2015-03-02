@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 
+@SuppressWarnings("serial")
 class Settings extends Properties {
     Settings() {
         try {
