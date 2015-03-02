@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 public class Game2d{
 	private static Player Actor;
 	private JFrame game_window;
-	private final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
+	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
 	private static paint_panel in_panel;
 	private static Listener KL = new Listener();
     private static Settings config;
@@ -23,7 +23,9 @@ public class Game2d{
 
 	/**Create the application and run it.*/
 	public Game2d() {
-        config = new Settings();
+        config = new Settings("config.properties");
+        WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
+        WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 		Maps = new Map_List(config);
 		initialize();//initializing frames and panels
 	}

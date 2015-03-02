@@ -4,9 +4,9 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 
 class Settings extends Properties {
-    Settings() {
+    Settings(String infile) {
         try {
-            InputStream in = new FileInputStream("config.properties");
+            InputStream in = new FileInputStream(infile);
             load(in);
         }
         catch (IOException ioe) {
@@ -14,6 +14,9 @@ class Settings extends Properties {
             System.exit(1);
         }
     }
+
+    String get(String key) { return getProperty(key); } 
+    String get(String key, String def) { return getProperty(key, def); }
 
     String getRequiredProperty(String key) throws BadConfigException {
         if (containsKey(key)) {
