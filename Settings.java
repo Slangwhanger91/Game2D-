@@ -14,4 +14,12 @@ class Settings extends Properties {
             System.exit(1);
         }
     }
+
+    String getRequiredProperty(String key) throws BadConfigException {
+        if (containsKey(key)) {
+            return getProperty(key);
+        } else {
+            throw new BadConfigException("required property not found: " + key);
+        }
+    }
 }
