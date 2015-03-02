@@ -31,11 +31,10 @@ public class Map_List {
         String maps_folder = config.get("mapfolder", "maps");
         String[] maps = mapstr.split(",");
 
-        map_list = new Maps[maps.length];
-        int map_magic = maps.length-1;
-        for (int i = 0; i < maps.length; i++) {
-            System.out.println(maps[i]);
-            map_list[i] = new Maps(String.format("%s/%s", maps_folder, maps[i]), map_magic--);
+        map_list = new Maps[maps.length/2];
+        int fetch = 0;
+        for (int i = 0; i < map_list.length; i++) {
+            map_list[i] = new Maps(String.format("%s/%s", maps_folder, maps[fetch++]), Integer.parseInt(maps[fetch++]));
         }
     }
 
