@@ -27,8 +27,8 @@ public class Map_List {
     public Map_List(Settings config) {
         map_index = 0;
 
-        String mapstr = config.getProperty("mapseq", "M2.bmp");
-        String maps_folder = config.getProperty("mapfolder", "maps");
+        String mapstr = config.get("mapseq", "M2.bmp");
+        String maps_folder = config.get("mapfolder", "maps");
         String[] maps = mapstr.split(",");
 
         map_list = new Maps[maps.length];

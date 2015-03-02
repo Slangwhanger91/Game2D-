@@ -19,7 +19,7 @@ class Settings extends Properties {
     String get(String key) { return getProperty(key); } 
     String get(String key, String def) { return getProperty(key, def); }
 
-    String getRequiredProperty(String key) throws BadConfigException {
+    String getRequired(String key) throws BadConfigException {
         if (containsKey(key)) {
             return getProperty(key);
         } else {

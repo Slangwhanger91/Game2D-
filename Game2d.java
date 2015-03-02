@@ -36,7 +36,7 @@ public class Game2d{
 		game_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		game_window.getContentPane().setLayout(null);
 		game_window.getContentPane().setBackground(Color.GRAY);
-		game_window.setTitle(config.getProperty("title", "Game2d"));
+		game_window.setTitle(config.get("title", "Game2d"));
 
 		in_panel = new paint_panel();
 		in_panel.setBackground(Color.WHITE);
