@@ -16,9 +16,15 @@ class Settings extends Properties {
         }
     }
 
+    /* Use these to get values out of the file. key=value pairs. */
     String get(String key) { return getProperty(key); } 
     String get(String key, String def) { return getProperty(key, def); }
 
+    /*
+     * Alternative to get where if there is no key for `key` it will throw an
+     * exception. Useful to indicate config values that *has* to be included,
+     * and not let the program run when they are not set.
+     */
     String getRequired(String key) throws BadConfigException {
         if (containsKey(key)) {
             return getProperty(key);
