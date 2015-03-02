@@ -14,6 +14,7 @@ public class Game2d{
 	private final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 	private static paint_panel in_panel;
 	private static Listener KL = new Listener();
+    private static Settings config;
 
 	//private static ArrayList<monsters> chars;
 	static private Map_List Maps;
@@ -22,7 +23,8 @@ public class Game2d{
 
 	/**Create the application and run it.*/
 	public Game2d() {
-		Maps = new Map_List();
+        config = new Settings();
+		Maps = new Map_List(config);
 		initialize();//initializing frames and panels
 	}
 
@@ -33,7 +35,7 @@ public class Game2d{
 		game_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		game_window.getContentPane().setLayout(null);
 		game_window.getContentPane().setBackground(Color.GRAY);
-		game_window.setTitle("Game2d Demo");
+		game_window.setTitle(config.getProperty("title", "Game2d"));
 
 		in_panel = new paint_panel();
 		in_panel.setBackground(Color.WHITE);

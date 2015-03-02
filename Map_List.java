@@ -24,6 +24,21 @@ public class Map_List {
 		map_list[2] = new Maps("maps/M3.bmp", 0);//this is the last map (-1)
 	}
 
+    public Map_List(Settings config) {
+        map_index = 0;
+
+        String mapstr = config.getProperty("mapseq", "M2.bmp");
+        String maps_folder = config.getProperty("mapfolder", "maps");
+        String[] maps = mapstr.split(",");
+
+        map_list = new Maps[maps.length];
+        int map_magic = maps.length-1;
+        for (int i = 0; i < maps.length; i++) {
+            System.out.println(maps[i]);
+            map_list[i] = new Maps(String.format("%s/%s", maps_folder, maps[i]), map_magic--);
+        }
+    }
+
 	public void new_level(Player Actor){
 		if(map_list[map_index].bonus) map_index++;
 		else map_index = map_list[map_index].next_map_index;//case where next map is -1 not used yet
