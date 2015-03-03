@@ -15,8 +15,8 @@ public class Maps {
 	ArrayList<PaintRectNode> toPaint;
 	private int MAP_WIDTH;
 	private int MAP_HEIGHT;
-	/**[0] == x, [1] == y.*/
-	public int[] player_starting_coords = new int[2];
+
+	public Point player_starting_coords;
 	
 	ArrayList<Point> monster_coords;
 	public monsters[] mobs_in_map;
@@ -76,6 +76,8 @@ public class Maps {
 	/**bitmap*/
 	Maps(String filename, int next_map_index) {
 		monster_coords = new ArrayList<Point>();
+		player_starting_coords = new Point();
+		
 		fromBitmap(filename);
 		this.next_map_index = next_map_index;
 		build_toPaint();
@@ -155,8 +157,8 @@ public class Maps {
 
 			switch(tmp.type){
 			case 'C':
-				player_starting_coords[0] = cursor;
-				player_starting_coords[1] = row;
+				player_starting_coords.x = cursor;
+				player_starting_coords.y = row;
 				map[row][cursor] = air;
 				break;
 			case 'M':

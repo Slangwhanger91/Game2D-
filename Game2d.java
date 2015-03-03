@@ -26,7 +26,7 @@ public class Game2d{
 		exists "800" is taken as default instead.*/
 		WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
-		Maps = new Map_List(config, Actor);
+		Maps = new Map_List(config);
 		initialize();//initializing frames and panels
 	}
 
@@ -46,6 +46,7 @@ public class Game2d{
 
 		Maps.initialize_monsters();
 		Actor = new Player(Maps, new Char_stats("Playa", 100, 30, 0, 15));
+		Maps.set_actor_once(Actor);
 
 		game_window.addKeyListener(KL);
 	}

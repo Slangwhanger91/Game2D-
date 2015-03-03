@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -32,13 +33,13 @@ abstract class NPC{
 	protected Map_List Maps;
 	protected PSN previous_step;//unstuck method
 	protected Char_stats CS;
-	
+
 	/**<u>initializes:</u> <br>speed, <br>velocity, <br>stacked_velocity, <br>height,
 	 * <br>width, <br>Maps(Map_List), <br>previous_step(PSN), <br>CS(Char_stats).*/
 	public abstract void init();
 	public abstract void movement(char key);
 	public abstract void gravity(char key);
-	
+
 	public boolean isFlying(){
 		for (int i = 0; i <= width; i+=3) {
 			if(Maps.map_list[Maps.map_index].map[shape.y + height +1][shape.x + i].type != 'A')
@@ -121,11 +122,11 @@ class Player extends NPC{
 		init();
 		this.CS = CS;
 		this.Maps = M;
-		int[] pc = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
-		shape = new Rectangle(pc[0], pc[1], width, height);
-		
-		y_coord = M.map_list[Maps.map_index].player_starting_coords[1] - 300;
-		x_coord = M.map_list[Maps.map_index].player_starting_coords[0] - 300;
+
+		Point p = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
+		shape = new Rectangle(p.x, p.y, width, height);
+		x_coord = p.x - 300;
+		y_coord = p.y - 300;
 	}
 
 	private boolean x_camera_pos(){
