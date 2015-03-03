@@ -6,8 +6,9 @@ public class Char_stats {
 	private int max_mana;
 	public int mana;
 	
-	private int stacked_goods_required;
-	public int stacked_goods;
+	private int stacked_power_required;
+	public int stacked_power;
+	public int power_level;
 
 	private int armor;
 	
@@ -39,20 +40,21 @@ public class Char_stats {
 		mana = this.max_mana = max_mana;
 		this.armor = armor;
 		this.base_damage = base_damage;
-		stacked_goods_required = 200;
-		stacked_goods = 0;
+		stacked_power_required = 1;
+		stacked_power = 0;
+		power_level = 0;
 	}
 
 	public void lvlUP(){
 		max_health *= 1.1;
 		max_mana *= 1.1;
-		stacked_goods_required *= 1.5;
+		stacked_power_required *= 1.5;
 		armor += 2;
 		++base_damage;
 		
 		health = max_health;
 		mana = max_mana;
-		stacked_goods = 0;
+		stacked_power = 0;
 	}
 
 	public void falling_damage(int stacked_velocity){

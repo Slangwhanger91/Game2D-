@@ -17,7 +17,7 @@ public class Maps {
 	private int MAP_WIDTH;
 	private int MAP_HEIGHT;
 	/**[0] == x, [1] == y.*/
-	public int[] player_coords = new int[2];
+	public int[] player_starting_coords = new int[2];
 	
 	ArrayList<Point> monster_coords;
 	public monsters[] mobs_in_map;
@@ -73,13 +73,7 @@ public class Maps {
 		}
 		System.out.println("size of toPaint: " + toPaint.size());
 	}
-
-	Maps(String filename){
-		monster_coords = new ArrayList<Point>();
-		fromText(filename);
-		build_toPaint();
-	}
-
+	
 	/**bitmap*/
 	Maps(String filename, int next_map_index) {
 		monster_coords = new ArrayList<Point>();
@@ -162,8 +156,8 @@ public class Maps {
 
 			switch(tmp.type){
 			case 'C':
-				player_coords[0] = cursor;
-				player_coords[1] = row;
+				player_starting_coords[0] = cursor;
+				player_starting_coords[1] = row;
 				map[row][cursor] = air;
 				break;
 			case 'M':
@@ -184,38 +178,6 @@ public class Maps {
 		}
 		bb.flip();
 		return bb.getInt();
-	}
-
-
-	void fromText(String filename) {
-		try{
-			//Create object of FileReader
-			FileReader input_f = new FileReader(filename);
-
-			//Instantiate the BufferedReader Class
-			BufferedReader BR = new BufferedReader(input_f);
-
-			// Read file line by line and fill map.
-			String line = BR.readLine();
-			String size[] = line.split("x");
-			MAP_WIDTH = Integer.parseInt(size[0]);
-			MAP_HEIGHT = Integer.parseInt(size[1]);
-			//System.out.println("width: " + width + ", height: " + height);
-			map = new MapNode[MAP_HEIGHT][MAP_WIDTH];
-			for(int y = 0; (line = BR.readLine()) != null; y++){
-				for (int x = 0; x < MAP_WIDTH; x++) {
-					map[y][x] = new MapNode(line.charAt(x));
-					if(map[y][x].type == 'C'){
-						player_coords[0] = x;
-						player_coords[1] = y;
-						map[y][x].type = 'A';
-					}
-				}
-			}
-
-			BR.close();
-			input_f.close();
-		}catch(IOException e){System.out.println("Couldn't find file");}
 	}
 
 }

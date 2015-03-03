@@ -5,13 +5,13 @@ import java.awt.Rectangle;
 public class Monster_types_and_mechanics {}
 
 class monsters extends NPC{
-	Maps map;
+	Map_List map_list;
 	
-	monsters(Maps M, Char_stats CS, int i){
+	monsters(Map_List M, Char_stats CS, int i){
 		init();
 		this.CS = CS; //create a new one with relevance to the level
-		this.map = M;
-		Point mc = M.monster_coords.get(i);//to reduce code size...
+		this.map_list = M;
+		Point mc = M.map_list[M.map_index].monster_coords.get(i);//to reduce code size...
 		shape = new Rectangle(mc.x, mc.y, width, height);
 	}
 	
@@ -20,7 +20,7 @@ class monsters extends NPC{
 	}
 	
 	public void AI_gravity(){
-		shape.y--;
+		
 	}
 	
 	@Override
@@ -46,6 +46,7 @@ class monsters extends NPC{
 	
 }
 
-/*class mob1 extends monsters{
+//type of mobs here:
+/*class mob1 extends monsters{ 
 	
 }*/

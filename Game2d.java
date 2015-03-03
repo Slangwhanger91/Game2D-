@@ -13,19 +13,20 @@ public class Game2d{
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
 	private static paint_panel in_panel;
 	private static Listener KL = new Listener();
-    private static Settings config;
+	private static Settings config;
 
-	//private static ArrayList<monsters> chars;
 	static private Map_List Maps;
 
 	public static int game_speed = 30;//fps
 
 	/**Create the application and run it.*/
 	public Game2d() {
-        config = new Settings("config.properties");
-        WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
-        WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
-		Maps = new Map_List(config);
+		config = new Settings("config.properties");
+		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
+		exists "800" is taken as default instead.*/
+		WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
+		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
+		Maps = new Map_List(config, Actor);
 		initialize();//initializing frames and panels
 	}
 
@@ -44,8 +45,8 @@ public class Game2d{
 		game_window.getContentPane().add(in_panel);
 
 		Maps.initialize_monsters();
-		
 		Actor = new Player(Maps, new Char_stats("Playa", 100, 30, 0, 15));
+
 		game_window.addKeyListener(KL);
 	}
 
@@ -64,9 +65,6 @@ public class Game2d{
 
 			//paints map every frame
 			for(PaintRectNode PRN : Maps.map_list[Maps.map_index].toPaint){
-				//if(PRN.type == 'C')
-				//System.out.println("paintsize: " + Maps.map_list[Maps.map_index].toPaint.size());
-				//System.out.println(PRN.type);
 				switch(PRN.type){
 				case 'G':
 					g.setColor(Color.GREEN);
@@ -85,11 +83,11 @@ public class Game2d{
 				Rectangle R = MOB.shape;
 				g.fillRect(R.x - Actor.x_coord, R.y - Actor.y_coord, R.width, R.height);
 			}
-			
+
 			//painting main character
 			g.setColor(Color.BLACK);
 			g.fillRect(Actor.shape.x - Actor.x_coord, Actor.shape.y - Actor.y_coord, Actor.width, Actor.height);
-			
+
 		}//end of paintComponent.
 	}//end of paint panel.
 

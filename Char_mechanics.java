@@ -121,11 +121,11 @@ class Player extends NPC{
 		init();
 		this.CS = CS;
 		this.Maps = M;
-		int[] pc = M.map_list[Maps.map_index].player_coords;//to reduce code size...
+		int[] pc = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
 		shape = new Rectangle(pc[0], pc[1], width, height);
 		
-		y_coord = M.map_list[Maps.map_index].player_coords[1] - 300;
-		x_coord = M.map_list[Maps.map_index].player_coords[0] - 300;
+		y_coord = M.map_list[Maps.map_index].player_starting_coords[1] - 300;
+		x_coord = M.map_list[Maps.map_index].player_starting_coords[0] - 300;
 	}
 
 	private boolean x_camera_pos(){
@@ -269,7 +269,7 @@ class Player extends NPC{
 				|| MN[shape.y + height + 3][shape.x + width + 3].type == 'P'
 				|| MN[shape.y + (height / 2)][shape.x + width + 5].type == 'P'
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
-			Maps.new_level(this);
+			Maps.new_level();
 	}
 }
 
