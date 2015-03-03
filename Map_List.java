@@ -16,7 +16,7 @@ public class Map_List {
         String maps_folder = config.get("mapfolder", "maps");
         String[] maps = mapstr.split(",");
 
-        map_list = new Maps[maps.length/2];//There're two ','s for every map
+        map_list = new Maps[maps.length/2];//There're two ','s for every map.
         int fetch = 0;
         for (int i = 0; i < map_list.length; i++) {
             map_list[i] = new Maps(String.format("%s/%s", maps_folder, maps[fetch++]), Integer.parseInt(maps[fetch++]));
