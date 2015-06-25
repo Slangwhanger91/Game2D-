@@ -99,6 +99,8 @@ public class Game2d{
 				//Actor actions:
 				Actor.movement(KL.get_moveKey());
 				Actor.gravity(KL.get_otherKey());
+				//System.out.println("x coords: " + Actor.x_coord);
+				//System.out.println("shape x: " + Actor.shape.x);
 				//NPCs actions:
 				for (monsters MOB : Maps.map_list[Maps.map_index].mobs_in_map){
 					MOB.AI_movement();

@@ -1,14 +1,15 @@
 
 public class Char_stats {
-	public int max_health;
+	private int max_health;
 	private int health;
 
 	private int max_mana;
-	public int mana;
+	private int mana;
 	
-	private int stacked_power_required;
-	public int stacked_power;
-	public int power_level;
+	private int stacked_power_bits_required;
+	private int stacked_power_bits;
+	//private final int power_level_max = 3;
+	private int power_level;
 
 	private int armor;
 	
@@ -40,21 +41,21 @@ public class Char_stats {
 		mana = this.max_mana = max_mana;
 		this.armor = armor;
 		this.base_damage = base_damage;
-		stacked_power_required = 1;
-		stacked_power = 0;
+		stacked_power_bits_required = 1;
+		stacked_power_bits = 0;
 		power_level = 0;
 	}
 
 	public void lvlUP(){
 		max_health *= 1.1;
 		max_mana *= 1.1;
-		stacked_power_required *= 1.5;
+		stacked_power_bits_required *= 1.5;
 		armor += 2;
 		++base_damage;
 		
 		health = max_health;
 		mana = max_mana;
-		stacked_power = 0;
+		stacked_power_bits = 0;
 	}
 
 	public void falling_damage(int stacked_velocity){
@@ -63,7 +64,11 @@ public class Char_stats {
 		isAlive();
 	}
 
-	public void taking_damage(int raw_hit){//armor should be included
+	public void taking_damage(Char_stats CS){//armor should be included
+		taking_damage(CS.base_damage);
+	}
+	
+	private void taking_damage(int raw_hit){//armor should be included
 		if(armor <= raw_hit)
 			health = health - (raw_hit - armor);
 		isAlive();

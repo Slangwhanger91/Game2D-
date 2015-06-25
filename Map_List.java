@@ -2,12 +2,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Map_List {
-	private Player Actor;
+	public Player Actor;
 	public void set_actor_once(Player Actor){
 		this.Actor = Actor;
 	}
 
-	Maps map_list[];
+	public Maps map_list[];
 	public int map_index;//Should be interacting later on with saves/loads
 
 	public Map_List(Settings config) {
@@ -30,8 +30,8 @@ public class Map_List {
 
 		Point p = map_list[map_index].player_starting_coords;
 		Actor.shape = new Rectangle(p.x, p.y, Actor.width, Actor.height);
-		Actor.y_coord = p.y - 300;//magical numbers from wonderland
-		Actor.x_coord = p.x - 300;
+		Actor.y_coord = p.y - 300;//magical numbers from a Diablo3 rainbow unicorn
+		Actor.x_coord = p.x - 300;//deal with it.
 
 		initialize_monsters();
 	}
@@ -45,7 +45,7 @@ public class Map_List {
 
 		for (int i = 0; i < M.mobs_in_map.length; i++) {
 			//each i stands for a different mob in the current map.
-			M.mobs_in_map[i] = new monsters(this, new Char_stats("monsta", 100, 30, 0, 15), i);	
+			M.mobs_in_map[i] = new monsters(this, new Char_stats("monsta", 100, 30, 0, 1), i);	
 		}
 	}
 

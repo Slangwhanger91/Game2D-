@@ -125,6 +125,7 @@ class Player extends NPC{
 
 		Point p = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
 		shape = new Rectangle(p.x, p.y, width, height);
+		//camera:
 		x_coord = p.x - 300;
 		y_coord = p.y - 300;
 	}
@@ -256,7 +257,7 @@ class Player extends NPC{
 			CS.falling_damage(stacked_velocity);
 			stacked_velocity = -44;
 		}
-		System.out.println("health: " + CS.getHealth());
+		System.out.println("health: " + CS.getHealth()); //SHOW HEALTH
 		//CS.lvlUP();
 		someNextLevelCheckWow();//much wow very next level
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
@@ -272,6 +273,9 @@ class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			Maps.new_level();
 	}
+	
+	
+	
 }
 
 

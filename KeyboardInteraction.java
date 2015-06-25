@@ -15,7 +15,7 @@ class Listener implements KeyListener{
 		moveKey = '?';
 		otherKey = '?';
 		isHolding = false;
-		System.out.println("done");
+		//System.out.println("done");
 	}
 	
 	public char get_moveKey(){
