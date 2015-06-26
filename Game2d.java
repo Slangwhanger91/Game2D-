@@ -26,7 +26,7 @@ public class Game2d{
 		exists "800" is taken as default instead.*/
 		WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
-		Maps = new Map_List(config);
+		Maps = new Map_List(config, new GameItems());
 		initialize();//initializing frames and panels
 	}
 
@@ -45,7 +45,7 @@ public class Game2d{
 		game_window.getContentPane().add(in_panel);
 
 		Maps.initialize_monsters();
-		Actor = new Player(Maps, new Char_stats("Playa", 100, 30, 0, 15));
+		Actor = new Player(Maps, new Char_stats("Playa", 100, 30, 0, 1));
 		Maps.set_actor_once(Actor);
 
 		game_window.addKeyListener(KL);
@@ -99,6 +99,7 @@ public class Game2d{
 				//Actor actions:
 				Actor.movement(KL.get_moveKey());
 				Actor.gravity(KL.get_otherKey());
+				Actor.actions(KL.get_otherKey());
 				//System.out.println("x coords: " + Actor.x_coord);
 				//System.out.println("shape x: " + Actor.shape.x);
 				//NPCs actions:
@@ -108,8 +109,8 @@ public class Game2d{
 				}
 				in_panel.repaint();
 			}
-			while((int)KL.get_otherKey() != 27 && !Actor.CS.getisAlive()){
-				try{Thread.sleep(game_speed);}catch(InterruptedException e){};
+			while((int)KL.get_otherKey() != 27){
+				try{Thread.sleep(game_speed*10);}catch(InterruptedException e){};
 			}
 			System.exit(0);
 		}

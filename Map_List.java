@@ -6,11 +6,15 @@ public class Map_List {
 	public void set_actor_once(Player Actor){
 		this.Actor = Actor;
 	}
+	
+	public GameItems GI;
 
 	public Maps map_list[];
 	public int map_index;//Should be interacting later on with saves/loads
 
-	public Map_List(Settings config) {
+	public Map_List(Settings config, GameItems GI) {
+		this.GI = GI;
+		
 		map_index = 0;
 
 		String mapstr = config.get("mapseq", "M2.bmp");

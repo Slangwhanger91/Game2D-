@@ -65,7 +65,7 @@ public class Maps {
 						if(keepCheckingRows && y - i +1 > height)
 							height = y - i +1;
 					}//height collected
-					System.out.println("type:"+map[i][j].type+", y:"+i+", x:"+j+", width:"+width+", height:"+height);
+					//System.out.println("type:"+map[i][j].type+", y:"+i+", x:"+j+", width:"+width+", height:"+height);
 					toPaint.add(new PaintRectNode(map[i][j].type, new Rectangle(j, i, width, height)));	
 				}
 			}

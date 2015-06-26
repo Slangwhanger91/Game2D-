@@ -29,6 +29,7 @@ class Listener implements KeyListener{
 	//@Override
 	public void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
+		System.out.println(e.getKeyCode());
 		if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd'){
 			if(moveKey != '?' && moveKey != e.getKeyChar())
 				isHolding = true;

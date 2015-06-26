@@ -1,36 +1,42 @@
+import java.util.ArrayList;
+
 
 public class Char_stats {
+	private ArrayList<Weapon> weapons;
+	private Weapon current_weapon;
+	private int weapon_index = 1;
+
 	private int max_health;
 	private int health;
 
 	private int max_mana;
 	private int mana;
-	
-	private int stacked_power_bits_required;
-	private int stacked_power_bits;
+
+	//private int stacked_power_bits_required;
+	//private int stacked_power_bits;
 	//private final int power_level_max = 3;
-	private int power_level;
+	//private int power_level;
 
 	private int armor;
-	
-	private int base_damage;
+
+	private int attack_damage;//mainly for mobs
 
 	private String name;
 
 	private boolean alive = true;
-	
+
 	public boolean getisAlive(){
 		return alive;
 	}
-	
+
 	private void isAlive(){
 		if(health <= 0) alive = false;
 	}
-	
+
 	public int getHealth(){
 		return health;
 	}
-	
+
 	public int getMana(){
 		return mana;
 	}
@@ -40,23 +46,26 @@ public class Char_stats {
 		health = this.max_health = max_health;
 		mana = this.max_mana = max_mana;
 		this.armor = armor;
-		this.base_damage = base_damage;
-		stacked_power_bits_required = 1;
-		stacked_power_bits = 0;
-		power_level = 0;
+		this.attack_damage = base_damage;
+
+		weapons = new ArrayList<Weapon>();
+
+		//stacked_power_bits_required = 1;
+		//stacked_power_bits = 0;
+		//power_level = 0;
 	}
 
-	public void lvlUP(){
+	/*public void lvlUP(){
 		max_health *= 1.1;
 		max_mana *= 1.1;
 		stacked_power_bits_required *= 1.5;
 		armor += 2;
 		++base_damage;
-		
+
 		health = max_health;
 		mana = max_mana;
 		stacked_power_bits = 0;
-	}
+	}*/
 
 	public void falling_damage(int stacked_velocity){
 		if(stacked_velocity > 0)
@@ -65,15 +74,148 @@ public class Char_stats {
 	}
 
 	public void taking_damage(Char_stats CS){//armor should be included
-		taking_damage(CS.base_damage);
+		taking_damage(CS.attack_damage);
 	}
-	
+
 	private void taking_damage(int raw_hit){//armor should be included
 		if(armor <= raw_hit)
 			health = health - (raw_hit - armor);
 		isAlive();
 	}
+
+	public void deal_damage(Char_stats CS){
+		
+	}
+
+	public void obtain_weapon(Weapon W){
+		//System.out.println("CHECK");
+		if(!weapons.contains(W) && weapons.size() < 4){//amount of weapons limit
+			weapons.add(W);
+		}
+	}
+	
+	public void switch_weapon(Weapon W){
+		attack_damage -= current_weapon.get_dmg();
+		
+		current_weapon = W; //current weapon switched
+		attack_damage += current_weapon.get_dmg();
+		weapons.set(weapon_index, current_weapon);
+		
+	}
+
+	public void equip_weapon(char key){//'1','2','3','4'
+		Weapon W = null;
+		switch(key){
+		case '1':
+			if(weapons.size() > 0){
+				W = weapons.get(1);
+				weapon_index = 1;
+			}
+			break;
+		case '2':
+			if(weapons.size() > 1){
+				W = weapons.get(2);
+				weapon_index = 2;
+			}
+			break;
+		case '3':
+			if(weapons.size() > 2){
+				W = weapons.get(3);
+				weapon_index = 3;
+			}
+			break;
+		case '4':
+			if(weapons.size() > 3){
+				W = weapons.get(4);
+				weapon_index = 4;
+			}
+			break;
+		}
+
+		attack_damage -= current_weapon.get_dmg();
+		current_weapon = W;
+		attack_damage += current_weapon.get_dmg();
+	}
 }
 
-//place weapon classes here
+//place weapon classes here:
+class Weapon{
+
+	private int dmg_bonus;
+	private int range;
+	private int degree_a, degree_b;//from - to: f.e 1 to 90 would be a slash from
+	//above the player into a straight line where the player is facing.
+	
+	private String name;
+	
+	public Weapon(String name, int dmg_bonus, int range, int degree_a, int degree_b){
+		this.name = name;
+		this.dmg_bonus = dmg_bonus;
+		this.range = range;
+		this.degree_a = degree_a;
+		this.degree_b = degree_b;
+	}
+
+	public int get_dmg(){ return dmg_bonus; }
+	public int get_range(){ return range; }
+	public int get_da(){ return degree_a; }
+	public int get_db(){ return degree_b; }
+}
+
 //place equipment classes here
+class Equipment{
+	/**0: head
+	 * <br>1: arms
+	 * <br>2: chest
+	 * <br>3: legs
+	 * <br>4: neck
+	 * <br>5: ring*/
+	private int slot;
+	private String name;
+
+	public Equipment(String name, int slot){
+		this.name = name;
+		this.slot = slot;
+	}
+}
+
+//creates all the items in the game
+class GameItems{
+	
+	private ArrayList<Weapon> all_weapons = new ArrayList<Weapon>();;
+	//equipment
+	@SuppressWarnings("unchecked")
+	private ArrayList<Equipment>[] all_equipment = new ArrayList[6];
+	
+	public Weapon get_w(int weapon_index){
+		return all_weapons.get(weapon_index);
+	}
+	
+	/**0: head
+	 * <br>1: arms
+	 * <br>2: chest
+	 * <br>3: legs
+	 * <br>4: neck
+	 * <br>5: ring*/
+	public Equipment get_e(int equipment_index, int slot){
+		return all_equipment[slot].get(equipment_index);
+	}
+	
+	GameItems(){
+		for (int i = 0; i < all_equipment.length; i++) {
+			all_equipment[i] = new ArrayList<Equipment>();	
+		}
+		//=================================================================
+		//add weapons:
+		all_weapons.add(new Weapon("Slayer of Nothing", 200, 10, 90, 90));
+		//System.out.println("w1: "+all_weapons.get(0));
+		//=================================================================
+		//add equipment:
+	}
+}
+
+
+
+
+
+

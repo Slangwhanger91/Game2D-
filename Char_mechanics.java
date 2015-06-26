@@ -123,6 +123,8 @@ class Player extends NPC{
 		this.CS = CS;
 		this.Maps = M;
 
+		this.CS.obtain_weapon(Maps.GI.get_w(0));
+		
 		Point p = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
 		shape = new Rectangle(p.x, p.y, width, height);
 		//camera:
@@ -142,6 +144,13 @@ class Player extends NPC{
 		return false;
 	}
 
+	/**related to attack moves*/
+	private char facing;
+	
+	public void actions(char key){
+		//System.out.println(key);
+	}
+	
 	@Override
 	public void movement(char key) {
 		final int SPEED = speed;
@@ -150,6 +159,7 @@ class Player extends NPC{
 		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//reducing code size...
 		switch(key){
 		case 'a':	
+			facing = 'a';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x - speed].type == 'A'){
@@ -177,6 +187,7 @@ class Player extends NPC{
 			break;
 
 		case 'd':
+			facing = 'd';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x + speed + width].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x + speed + width].type == 'A'){
