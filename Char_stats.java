@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 
-
 public class Char_stats {
 	private ArrayList<Weapon> weapons;
 	private Weapon current_weapon;
 	private int weapon_index = 1;
 
+	public int[] get_current_weapon_seq(){
+		return current_weapon.getSequence();
+	}
+	
 	private int max_health;
 	private int health;
 
@@ -84,7 +87,8 @@ public class Char_stats {
 	}
 
 	public void deal_damage(Char_stats CS){
-		
+		//System.out.println(CS.attack_damage);
+		CS.taking_damage(this);
 	}
 
 	public void obtain_weapon(Weapon W){
@@ -93,14 +97,14 @@ public class Char_stats {
 			weapons.add(W);
 		}
 	}
-	
+
 	public void switch_weapon(Weapon W){
 		attack_damage -= current_weapon.get_dmg();
-		
+
 		current_weapon = W; //current weapon switched
 		attack_damage += current_weapon.get_dmg();
 		weapons.set(weapon_index, current_weapon);
-		
+
 	}
 
 	public void equip_weapon(char key){//'1','2','3','4'
@@ -108,31 +112,33 @@ public class Char_stats {
 		switch(key){
 		case '1':
 			if(weapons.size() > 0){
-				W = weapons.get(1);
-				weapon_index = 1;
+				W = weapons.get(0);
+				weapon_index = 0;
 			}
 			break;
 		case '2':
 			if(weapons.size() > 1){
-				W = weapons.get(2);
-				weapon_index = 2;
+				W = weapons.get(1);
+				weapon_index = 1;
 			}
 			break;
 		case '3':
 			if(weapons.size() > 2){
-				W = weapons.get(3);
-				weapon_index = 3;
+				W = weapons.get(2);
+				weapon_index = 2;
 			}
 			break;
 		case '4':
 			if(weapons.size() > 3){
-				W = weapons.get(4);
-				weapon_index = 4;
+				W = weapons.get(3);
+				weapon_index = 3;
 			}
 			break;
 		}
-
-		attack_damage -= current_weapon.get_dmg();
+		
+		if(current_weapon != null){
+			attack_damage -= current_weapon.get_dmg();
+		}
 		current_weapon = W;
 		attack_damage += current_weapon.get_dmg();
 	}
@@ -141,19 +147,23 @@ public class Char_stats {
 //place weapon classes here:
 class Weapon{
 
+	private String name;
 	private int dmg_bonus;
 	private int range;
 	private int degree_a, degree_b;//from - to: f.e 1 to 90 would be a slash from
 	//above the player into a straight line where the player is facing.
+	private int[] sequence;
 	
-	private String name;
-	
-	public Weapon(String name, int dmg_bonus, int range, int degree_a, int degree_b){
+	public int[] getSequence(){ return sequence; }
+
+	public Weapon(String name, int dmg_bonus, int range, int degree_a, 
+			int degree_b, int[] atk_seq){
 		this.name = name;
 		this.dmg_bonus = dmg_bonus;
 		this.range = range;
 		this.degree_a = degree_a;
 		this.degree_b = degree_b;
+		this.sequence = atk_seq;
 	}
 
 	public int get_dmg(){ return dmg_bonus; }
@@ -181,16 +191,16 @@ class Equipment{
 
 //creates all the items in the game
 class GameItems{
-	
+
 	private ArrayList<Weapon> all_weapons = new ArrayList<Weapon>();;
 	//equipment
 	@SuppressWarnings("unchecked")
 	private ArrayList<Equipment>[] all_equipment = new ArrayList[6];
-	
+
 	public Weapon get_w(int weapon_index){
 		return all_weapons.get(weapon_index);
 	}
-	
+
 	/**0: head
 	 * <br>1: arms
 	 * <br>2: chest
@@ -200,14 +210,15 @@ class GameItems{
 	public Equipment get_e(int equipment_index, int slot){
 		return all_equipment[slot].get(equipment_index);
 	}
-	
+
 	GameItems(){
 		for (int i = 0; i < all_equipment.length; i++) {
 			all_equipment[i] = new ArrayList<Equipment>();	
 		}
 		//=================================================================
 		//add weapons:
-		all_weapons.add(new Weapon("Slayer of Nothing", 200, 10, 90, 90));
+		all_weapons.add(new Weapon("Slayer of Nothing", 200, 10, 90, 90, 
+				new int[]{15, 35, 50, 45, 25}));
 		//System.out.println("w1: "+all_weapons.get(0));
 		//=================================================================
 		//add equipment:

@@ -1,20 +1,31 @@
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Map_List {
 	public Player Actor;
 	public void set_actor_once(Player Actor){
 		this.Actor = Actor;
 	}
-	
-	public GameItems GI;
+
+	public GameItems GI; //WHY IS THIS HERE
+	/**Each column represents the things to draw on the upcoming frame.
+	 * That column will then be removed and if one of the arrays get
+	 * empty, it's then removed.*/
+	public ArrayList<ArrayList<Integer>> image_sequences = new ArrayList<ArrayList<Integer>>();
+	public void add_sequence(int[] seq){
+		image_sequences.add(new ArrayList<Integer>());
+		for (int i = 0; i < seq.length; i++) {
+			image_sequences.get(image_sequences.size() - 1).add(seq[i]);
+		}
+	}
 
 	public Maps map_list[];
 	public int map_index;//Should be interacting later on with saves/loads
 
 	public Map_List(Settings config, GameItems GI) {
 		this.GI = GI;
-		
+
 		map_index = 0;
 
 		String mapstr = config.get("mapseq", "M2.bmp");
@@ -45,11 +56,11 @@ public class Map_List {
 		Maps M = map_list[map_index];
 
 		int mobs_amount = M.monster_coords.size();
-		M.mobs_in_map = new monsters[mobs_amount];
+		M.mobs_in_map = new ArrayList<Monster>();
 
-		for (int i = 0; i < M.mobs_in_map.length; i++) {
+		for (int i = 0; i < mobs_amount; i++) {
 			//each i stands for a different mob in the current map.
-			M.mobs_in_map[i] = new monsters(this, new Char_stats("monsta", 100, 30, 0, 1), i);	
+			M.mobs_in_map.add(new Monster(this, new Char_stats("monsta", 100, 30, 0, 1), i));	
 		}
 	}
 

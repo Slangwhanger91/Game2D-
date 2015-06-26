@@ -19,7 +19,7 @@ public class Maps {
 	public Point player_starting_coords;
 	
 	ArrayList<Point> monster_coords;
-	public monsters[] mobs_in_map;
+	public ArrayList<Monster> mobs_in_map;
 	
 	public boolean bonus = false;//YOU'LL NEED TO EARN IT, BIATCH.
 

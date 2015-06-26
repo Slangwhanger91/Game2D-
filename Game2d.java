@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -80,15 +81,36 @@ public class Game2d{
 
 			//painting characters/creatures
 			g.setColor(Color.MAGENTA);//why's purple called "magneta", who knows..
-			for(monsters MOB : Maps.map_list[Maps.map_index].mobs_in_map){
+			for(Monster MOB : Maps.map_list[Maps.map_index].mobs_in_map){
 				Rectangle R = MOB.shape;
 				g.fillRect(R.x - Actor.x_coord, R.y - Actor.y_coord, R.width, R.height);
 			}
 
 			//painting main character
 			g.setColor(Color.BLACK);
-			g.fillRect(Actor.shape.x - Actor.x_coord, Actor.shape.y - Actor.y_coord, Actor.width, Actor.height);
+			g.fillRect(Actor.shape.x - Actor.x_coord, 
+					Actor.shape.y - Actor.y_coord, Actor.width, Actor.height);
 
+			//weapon:
+			g.setColor(Color.BLUE);
+			ArrayList<Integer> seq;
+			for (int i = 0; i < Maps.image_sequences.size(); i++) {
+				seq = Maps.image_sequences.get(i);
+				if(Actor.getFacing() == 'd'){
+					g.fillRect(Actor.shape.x - Actor.x_coord + Actor.width, 
+							Actor.shape.y - Actor.y_coord + Actor.height/2,
+							seq.remove(0), 2);
+				}
+				else{
+					int img = seq.remove(0);
+					g.fillRect(Actor.shape.x - Actor.x_coord - img, 
+							Actor.shape.y - Actor.y_coord + Actor.height/2,
+							img, 2);
+				}
+				
+				if(seq.isEmpty())
+					Maps.image_sequences.remove(i);
+			}
 		}//end of paintComponent.
 	}//end of paint panel.
 
@@ -103,12 +125,19 @@ public class Game2d{
 				//System.out.println("x coords: " + Actor.x_coord);
 				//System.out.println("shape x: " + Actor.shape.x);
 				//NPCs actions:
-				for (monsters MOB : Maps.map_list[Maps.map_index].mobs_in_map){
-					MOB.AI_movement();
-					MOB.AI_gravity();
+				ArrayList<Monster> mobs = Maps.map_list[Maps.map_index].mobs_in_map;
+				for (int i = 0; i < mobs.size(); i++) {
+					if(mobs.get(i).CS.getisAlive()){
+						mobs.get(i).AI_movement();
+						mobs.get(i).AI_gravity();
+					}
+					else{
+						mobs.remove(i);
+					}
 				}
 				in_panel.repaint();
 			}
+			System.out.println("GAME OVER, L2P");
 			while((int)KL.get_otherKey() != 27){
 				try{Thread.sleep(game_speed*10);}catch(InterruptedException e){};
 			}

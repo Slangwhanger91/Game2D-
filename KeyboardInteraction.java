@@ -1,55 +1,48 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-
-public class KeyboardInteraction {
-
-}
+public class KeyboardInteraction {}
 
 class Listener implements KeyListener{
-	private char moveKey;
-	private char otherKey;
+	private int moveKey;
+	private int otherKey;
 	private boolean isHolding;
-	
+
 	Listener(){
-		moveKey = '?';
-		otherKey = '?';
+		moveKey = -1;
+		otherKey = -1;
 		isHolding = false;
-		//System.out.println("done");
 	}
-	
-	public char get_moveKey(){
+
+	public int get_moveKey(){
 		return moveKey;
 	}
-	
-	public char get_otherKey(){
+
+	public int get_otherKey(){
 		return otherKey;
 	}
-	
-	//@Override
+
 	public void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
-		System.out.println(e.getKeyCode());
-		if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd'){
-			if(moveKey != '?' && moveKey != e.getKeyChar())
+		//System.out.println(e.getKeyCode());
+		if(e.getKeyCode() == 65 || e.getKeyCode() == 68){//'a', 'd'
+			//	System.out.println("holding:"+isHolding);
+			if(moveKey != -1 && moveKey != e.getKeyCode())
 				isHolding = true;
-			moveKey = e.getKeyChar();
-		}else otherKey = e.getKeyChar();
+			moveKey = e.getKeyCode();
+		}else otherKey = e.getKeyCode();
 
 	}
 
-	//@Override
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd'){
+		if(e.getKeyCode() == 65 || e.getKeyCode() == 68){//'a', 'd'
 			if(!isHolding)
-				moveKey = '?';
+				moveKey = -1;
 			else isHolding = false;
 		}
-		if(e.getKeyChar() == ' ')
-			otherKey = '?';
+		if(e.getKeyCode() == 32 || e.getKeyCode() == 17)//space or ctrl
+			otherKey = -1;
 	}
 
-	//@Override
 	public void keyTyped(KeyEvent e) {}
-
 }

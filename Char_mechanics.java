@@ -37,8 +37,8 @@ abstract class NPC{
 	/**<u>initializes:</u> <br>speed, <br>velocity, <br>stacked_velocity, <br>height,
 	 * <br>width, <br>Maps(Map_List), <br>previous_step(PSN), <br>CS(Char_stats).*/
 	public abstract void init();
-	public abstract void movement(char key);
-	public abstract void gravity(char key);
+	public abstract void movement(int key);
+	public abstract void gravity(int key);
 
 	public boolean isFlying(){
 		for (int i = 0; i <= width; i+=3) {
@@ -124,7 +124,8 @@ class Player extends NPC{
 		this.Maps = M;
 
 		this.CS.obtain_weapon(Maps.GI.get_w(0));
-		
+		this.CS.equip_weapon('1');
+
 		Point p = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
 		shape = new Rectangle(p.x, p.y, width, height);
 		//camera:
@@ -146,19 +147,42 @@ class Player extends NPC{
 
 	/**related to attack moves*/
 	private char facing;
+	public char getFacing(){ return facing; }
 	
-	public void actions(char key){
-		//System.out.println(key);
+	private int attack_delay = 0;
+	
+	public void actions(int key){
+		//System.out.println(facing);
+		if(attack_delay > 0) attack_delay--;
+		
+		if(key == 17 && attack_delay == 0){//ctrl (both sides)
+			if(facing == 'd'){//right
+				//add logic
+				Maps.add_sequence(CS.get_current_weapon_seq());
+				attack_delay = 10;
+			}else{//left
+				//add logic
+				Maps.add_sequence(CS.get_current_weapon_seq());
+				attack_delay = 10;
+			}
+			
+			//if(!Maps.map_list[Maps.map_index].mobs_in_map.isEmpty())
+				//CS.deal_damage(Maps.map_list[Maps.map_index].mobs_in_map.get(0).CS);
+		}
+		if(key == 16){//shift
+			System.out.println(Maps.map_list[Maps.map_index].mobs_in_map.size());
+		}
 	}
-	
+
 	@Override
-	public void movement(char key) {
+	/**a:65, d:68*/
+	public void movement(int key) {
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
 		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//reducing code size...
 		switch(key){
-		case 'a':	
+		case 65:	
 			facing = 'a';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
@@ -186,7 +210,7 @@ class Player extends NPC{
 			}
 			break;
 
-		case 'd':
+		case 68:
 			facing = 'd';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x + speed + width].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
@@ -212,15 +236,16 @@ class Player extends NPC{
 				stepReturn();
 			}
 			break;
-		}//Receives '?' when no action is taken.
+		}//Receives -1 when no action is taken.
 		speed = SPEED;
 	}
 
 	@Override
-	public void gravity(char key) {
+	/**space:32*/
+	public void gravity(int key) {
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
-		if((!isFlying() || downhill()) && key == ' '){
+		if((!isFlying() || downhill()) && key == 32){
 			velocity = -14;
 			stacked_velocity = -44;
 			jumped = true;
@@ -268,7 +293,7 @@ class Player extends NPC{
 			CS.falling_damage(stacked_velocity);
 			stacked_velocity = -44;
 		}
-		System.out.println("health: " + CS.getHealth()); //SHOW HEALTH
+		//System.out.println("health: " + CS.getHealth()); //SHOW HEALTH
 		//CS.lvlUP();
 		someNextLevelCheckWow();//much wow very next level
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
@@ -284,9 +309,9 @@ class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			Maps.new_level();
 	}
-	
-	
-	
+
+
+
 }
 
 

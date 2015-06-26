@@ -4,11 +4,16 @@ import java.awt.Rectangle;
 
 public class Monster_types_and_mechanics {}
 
-class monsters extends NPC{
+class Monster extends NPC{
 
-	private char direction = '?';
+	private int direction = -1;
 
-	monsters(Map_List M, Char_stats CS, int i){
+	/**
+	 * @param M - connection with the map
+	 * @param CS - stats
+	 * @param i - retrieves index from <b>monster_coords</b> ArrayList
+	 */
+	Monster(Map_List M, Char_stats CS, int i){
 		init();
 		this.CS = CS; //create a new one with relevance to the level
 		this.Maps = M;
@@ -23,13 +28,13 @@ class monsters extends NPC{
 		if(c.x + c.width < shape.x){
 			if(!isFlying()){
 				if(shape.x - (c.x + c.width) > 350) move = false;
-				else direction = 'a';
+				else direction = 65;//'a'
 			}
 		}
 		else if(c.x > shape.x + shape.width){
 			if(!isFlying()){
 				if(c.x - (shape.x + shape.width) > 350) move = false;
-				else direction = 'd';
+				else direction = 68;//'d'
 			}
 		}
 		else if((c.y > shape.y && c.y < shape.y + shape.height)
@@ -51,23 +56,23 @@ class monsters extends NPC{
 
 	public void AI_gravity(){
 		double j = Math.random();
-		char key;
+		int key;
 
-		if(j > 0.9) key = ' ';//10% per frame to jump
-		else key = '?';
+		if(j > 0.95) key = 32;//5% per frame to jump
+		else key = -1;
 
 		gravity(key);//gravity mechanics + option to jump
 	}
 
 	@Override
-	public void movement(char direction) {
+	public void movement(int direction) {
 
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
 		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//reducing code size...
 		switch(direction){
-		case 'a':	
+		case 65://'a'	
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x - speed].type == 'A'){
@@ -89,7 +94,7 @@ class monsters extends NPC{
 			}
 			break;
 
-		case 'd':
+		case 68://'d'
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x + speed + width].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x + speed + width].type == 'A'){
@@ -109,15 +114,15 @@ class monsters extends NPC{
 				stepReturn();
 			}
 			break;
-		}//Receives '?' when no action is taken.
+		}//Receives -1 when no action is taken.
 		speed = SPEED;
 	}
 
 	@Override
-	public void gravity(char key) {
+	public void gravity(int key) {
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
-		if((!isFlying() || downhill()) && key == ' '){
+		if((!isFlying() || downhill()) && key == 32){//32 == space
 			velocity = -14;
 			jumped = true;
 		}
@@ -164,7 +169,7 @@ class monsters extends NPC{
 
 	@Override
 	public void init() {
-		speed = 2;
+		speed = 4;
 		height = 18;//sides hitbox split into 5
 		width = 12;//buttom/top hitbox split into 4
 		velocity = 0;
