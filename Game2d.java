@@ -10,15 +10,14 @@ import javax.swing.JPanel;
 
 public class Game2d{
 	private static Player Actor;
-	private JFrame game_window;
+	static private SharedDataLists SDL;
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
+	private JFrame game_window;
 	private static paint_panel in_panel;
 	private static Listener KL = new Listener();
 	private static Settings config;
-
-	static private Map_List Maps;
-
-	public static int game_speed = 30;//fps
+	private static int game_speed = 30;//fps
+	
 
 	/**Create the application and run it.*/
 	public Game2d() {
@@ -27,7 +26,11 @@ public class Game2d{
 		exists "800" is taken as default instead.*/
 		WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
-		Maps = new Map_List(config, new GameItems());
+		SDL = new SharedDataLists(config, new GameItems());
+		SDL.initialize_monsters();
+		Actor = new Player(SDL, new Char_stats("Playa", 100, 30, 0, 1));
+		SDL.set_actor_once(Actor);
+		
 		initialize();//initializing frames and panels
 	}
 
@@ -45,71 +48,68 @@ public class Game2d{
 		in_panel.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		game_window.getContentPane().add(in_panel);
 
-		Maps.initialize_monsters();
-		Actor = new Player(Maps, new Char_stats("Playa", 100, 30, 0, 1));
-		Maps.set_actor_once(Actor);
-
 		game_window.addKeyListener(KL);
 	}
 
 	/**Costume panel class for overriding the paintComponent method of a JPanel.*/
 	@SuppressWarnings("serial")
 	class paint_panel extends JPanel{
+		
+		private final int portal_resize = 5;
+		
 		paint_panel(){
 			super();
 		}
 
-		private final int portal_resize = 5;
-
 		/**Overriding method to paint on <b>this JPanel object</b>.*/
 		public void paintComponent(final Graphics g){
 			super.paintComponent(g);
-
+			//
 			//paints map every frame
-			for(PaintRectNode PRN : Maps.map_list[Maps.map_index].toPaint){
+			for(PaintRectNode PRN : SDL.map_list[SDL.map_index].toPaint){
 				switch(PRN.type){
 				case 'G':
 					g.setColor(Color.GREEN);
-					g.fillRect(PRN.rect.x - Actor.x_coord, PRN.rect.y - Actor.y_coord, PRN.rect.width, PRN.rect.height);
+					g.fillRect(PRN.rect.x - Actor.x_coord(), PRN.rect.y - Actor.y_coord(), PRN.rect.width, PRN.rect.height);
 					break;
 				case 'P':
 					g.setColor(Color.YELLOW);
-					g.fillOval(PRN.rect.x - Actor.x_coord - portal_resize, PRN.rect.y - Actor.y_coord - portal_resize, PRN.rect.width + (portal_resize*2), PRN.rect.height + (portal_resize*2));
+					g.fillOval(PRN.rect.x - Actor.x_coord() - portal_resize, PRN.rect.y - Actor.y_coord() - portal_resize, PRN.rect.width + (portal_resize*2), PRN.rect.height + (portal_resize*2));
 					break;
 				}
 			}
-
+			//
 			//painting characters/creatures
 			g.setColor(Color.MAGENTA);//why's purple called "magneta", who knows..
-			for(Monster MOB : Maps.map_list[Maps.map_index].mobs_in_map){
+			for(Monster MOB : SDL.map_list[SDL.map_index].mobs_in_map){
 				Rectangle R = MOB.shape;
-				g.fillRect(R.x - Actor.x_coord, R.y - Actor.y_coord, R.width, R.height);
+				g.fillRect(R.x - Actor.x_coord(), R.y - Actor.y_coord(), R.width, R.height);
 			}
-
+			//
 			//painting main character
 			g.setColor(Color.BLACK);
-			g.fillRect(Actor.shape.x - Actor.x_coord, 
-					Actor.shape.y - Actor.y_coord, Actor.width, Actor.height);
-
+			g.fillRect(Actor.shape.x - Actor.x_coord(), 
+					Actor.shape.y - Actor.y_coord(), Actor.width, Actor.height);
+			//
 			//weapon:
 			g.setColor(Color.BLUE);
 			ArrayList<Integer> seq;
-			for (int i = 0; i < Maps.image_sequences.size(); i++) {
-				seq = Maps.image_sequences.get(i);
+			for (int i = 0; i < SDL.image_sequences.size(); i++) {
+				seq = SDL.image_sequences.get(i);
 				if(Actor.getFacing() == 'd'){
-					g.fillRect(Actor.shape.x - Actor.x_coord + Actor.width, 
-							Actor.shape.y - Actor.y_coord + Actor.height/2,
+					g.fillRect(Actor.shape.x - Actor.x_coord() + Actor.width, 
+							Actor.shape.y - Actor.y_coord() + Actor.height/2,
 							seq.remove(0), 2);
 				}
 				else{
 					int img = seq.remove(0);
-					g.fillRect(Actor.shape.x - Actor.x_coord - img, 
-							Actor.shape.y - Actor.y_coord + Actor.height/2,
+					g.fillRect(Actor.shape.x - Actor.x_coord() - img, 
+							Actor.shape.y - Actor.y_coord() + Actor.height/2,
 							img, 2);
 				}
 				
 				if(seq.isEmpty())
-					Maps.image_sequences.remove(i);
+					SDL.image_sequences.remove(i);
 			}
 		}//end of paintComponent.
 	}//end of paint panel.
@@ -124,8 +124,9 @@ public class Game2d{
 				Actor.actions(KL.get_otherKey());
 				//System.out.println("x coords: " + Actor.x_coord);
 				//System.out.println("shape x: " + Actor.shape.x);
+				//
 				//NPCs actions:
-				ArrayList<Monster> mobs = Maps.map_list[Maps.map_index].mobs_in_map;
+				ArrayList<Monster> mobs = SDL.map_list[SDL.map_index].mobs_in_map;
 				for (int i = 0; i < mobs.size(); i++) {
 					if(mobs.get(i).CS.getisAlive()){
 						mobs.get(i).AI_movement();
@@ -136,9 +137,11 @@ public class Game2d{
 					}
 				}
 				in_panel.repaint();
-			}
+			}//Game loop ends
+			
 			System.out.println("GAME OVER, L2P");
-			while((int)KL.get_otherKey() != 27){
+			
+			while((int)KL.get_otherKey() != 27){//Waiting for player to accept defeat/stop crying
 				try{Thread.sleep(game_speed*10);}catch(InterruptedException e){};
 			}
 			System.exit(0);

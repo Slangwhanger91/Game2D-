@@ -2,13 +2,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-public class Map_List {
+public class SharedDataLists {
 	public Player Actor;
 	public void set_actor_once(Player Actor){
 		this.Actor = Actor;
 	}
 
-	public GameItems GI; //WHY IS THIS HERE
+	public GameItems GI;
+	
 	/**Each column represents the things to draw on the upcoming frame.
 	 * That column will then be removed and if one of the arrays get
 	 * empty, it's then removed.*/
@@ -20,10 +21,10 @@ public class Map_List {
 		}
 	}
 
-	public Maps map_list[];
+	public Map map_list[];
 	public int map_index;//Should be interacting later on with saves/loads
 
-	public Map_List(Settings config, GameItems GI) {
+	public SharedDataLists(Settings config, GameItems GI) {
 		this.GI = GI;
 
 		map_index = 0;
@@ -32,10 +33,10 @@ public class Map_List {
 		String maps_folder = config.get("mapfolder", "maps");
 		String[] maps = mapstr.split(",");
 
-		map_list = new Maps[maps.length/2];//There're two ','s for every map.
+		map_list = new Map[maps.length/2];//There're two ','s for every map.
 		int fetch = 0;
 		for (int i = 0; i < map_list.length; i++) {
-			map_list[i] = new Maps(String.format("%s/%s", maps_folder, maps[fetch++]), Integer.parseInt(maps[fetch++]));
+			map_list[i] = new Map(String.format("%s/%s", maps_folder, maps[fetch++]), Integer.parseInt(maps[fetch++]));
 		}
 	}
 
@@ -45,15 +46,14 @@ public class Map_List {
 
 		Point p = map_list[map_index].player_starting_coords;
 		Actor.shape = new Rectangle(p.x, p.y, Actor.width, Actor.height);
-		Actor.y_coord = p.y - 300;//magical numbers from a Diablo3 rainbow unicorn
-		Actor.x_coord = p.x - 300;//deal with it.
+		Actor.set_coords(p.x - 300, p.y - 300);
 
 		initialize_monsters();
 	}
 
 	/** monster objects to paint and act with */
 	public void initialize_monsters(){
-		Maps M = map_list[map_index];
+		Map M = map_list[map_index];
 
 		int mobs_amount = M.monster_coords.size();
 		M.mobs_in_map = new ArrayList<Monster>();

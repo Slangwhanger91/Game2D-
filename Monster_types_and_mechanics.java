@@ -9,21 +9,21 @@ class Monster extends NPC{
 	private int direction = -1;
 
 	/**
-	 * @param M - connection with the map
+	 * @param SDL - connection with the map
 	 * @param CS - stats
 	 * @param i - retrieves index from <b>monster_coords</b> ArrayList
 	 */
-	Monster(Map_List M, Char_stats CS, int i){
+	Monster(SharedDataLists SDL, Char_stats CS, int i){
 		init();
 		this.CS = CS; //create a new one with relevance to the level
-		this.Maps = M;
+		this.SDL = SDL;
 		//mob coordinates
-		Point mc = M.map_list[M.map_index].monster_coords.get(i);//to reduce code size...
+		Point mc = SDL.map_list[SDL.map_index].monster_coords.get(i);//to reduce code size...
 		shape = new Rectangle(mc.x, mc.y, width, height);
 	}
 
 	public void AI_movement(){
-		Rectangle c = Maps.Actor.shape;
+		Rectangle c = SDL.Actor.shape;
 		boolean move = true;
 		if(c.x + c.width < shape.x){
 			if(!isFlying()){
@@ -40,7 +40,7 @@ class Monster extends NPC{
 		else if((c.y > shape.y && c.y < shape.y + shape.height)
 				|| (c.y < shape.y && c.y + c.height > shape.y)){
 			//inside the x range of the player's rectangle
-			Maps.Actor.CS.taking_damage(this.CS);
+			SDL.Actor.CS.taking_damage(this.CS);
 		}
 
 		if(c.y + c.height < shape.y){//player above monster
@@ -58,7 +58,7 @@ class Monster extends NPC{
 		double j = Math.random();
 		int key;
 
-		if(j > 0.95) key = 32;//5% per frame to jump
+		if(j > 0.90) key = 32;//10% per frame to jump
 		else key = -1;
 
 		gravity(key);//gravity mechanics + option to jump
@@ -70,7 +70,7 @@ class Monster extends NPC{
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
-		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//reducing code size...
+		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//reducing code size...
 		switch(direction){
 		case 65://'a'	
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
@@ -128,7 +128,7 @@ class Monster extends NPC{
 		}
 		if(isFlying() || jumped){
 			int g = 0;
-			MapNode[][] MN = Maps.map_list[Maps.map_index].map;//to reduce code size...
+			MapNode[][] MN = SDL.map_list[SDL.map_index].map;//to reduce code size...
 			if(velocity > 0){//Falling.
 				boolean ground_below;
 				while(g < velocity){

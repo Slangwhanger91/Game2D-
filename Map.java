@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class Maps {
+public class Map {
 	MapNode[][] map;
 	ArrayList<PaintRectNode> toPaint;
 	private int MAP_WIDTH;
@@ -74,7 +74,7 @@ public class Maps {
 	}
 	
 	/**bitmap*/
-	Maps(String filename, int next_map_index) {
+	Map(String filename, int next_map_index) {
 		monster_coords = new ArrayList<Point>();
 		player_starting_coords = new Point();
 		

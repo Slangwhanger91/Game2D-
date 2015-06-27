@@ -6,6 +6,7 @@ import java.util.Queue;
 
 public class Char_mechanics {}
 
+/**Prevents a character from getting stuck.*/
 class PSN{
 	public Queue<Integer> x;
 	public Queue<Integer> y;
@@ -30,19 +31,19 @@ abstract class NPC{
 	protected int stacked_velocity;//falling damage
 	protected int height;
 	protected int width;
-	protected Map_List Maps;
+	protected SharedDataLists SDL;
 	protected PSN previous_step;//unstuck method
 	protected Char_stats CS;
 
 	/**<u>initializes:</u> <br>speed, <br>velocity, <br>stacked_velocity, <br>height,
-	 * <br>width, <br>Maps(Map_List), <br>previous_step(PSN), <br>CS(Char_stats).*/
+	 * <br>width, <br>previous_step(PSN).*/
 	public abstract void init();
 	public abstract void movement(int key);
 	public abstract void gravity(int key);
 
 	public boolean isFlying(){
 		for (int i = 0; i <= width; i+=3) {
-			if(Maps.map_list[Maps.map_index].map[shape.y + height +1][shape.x + i].type != 'A')
+			if(SDL.map_list[SDL.map_index].map[shape.y + height +1][shape.x + i].type != 'A')
 				return false;
 		}
 		return true;
@@ -56,7 +57,7 @@ abstract class NPC{
 		if(hill_tolerance > 0)
 			i +=4;
 		for (; i <= height; i+=2) {
-			if(Maps.map_list[Maps.map_index].map[shape.y + height - i -1][shape.x - speed -1].type != 'A'){
+			if(SDL.map_list[SDL.map_index].map[shape.y + height - i -1][shape.x - speed -1].type != 'A'){
 				return false;
 			}
 		}
@@ -71,7 +72,7 @@ abstract class NPC{
 		if(hill_tolerance > 0)
 			i +=4;
 		for (; i <= height; i+=2) {
-			if(Maps.map_list[Maps.map_index].map[shape.y + height - i -1][shape.x + speed + width +1].type != 'A'){
+			if(SDL.map_list[SDL.map_index].map[shape.y + height - i -1][shape.x + speed + width +1].type != 'A'){
 				return false;
 			}
 		}
@@ -96,7 +97,7 @@ abstract class NPC{
 	}
 
 	protected boolean downhill(){//gravity method
-		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//to reduce code size...
+		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//to reduce code size...
 		if(MN[shape.y + height + 3][shape.x].type != 'A'
 				|| MN[shape.y + height + 3][shape.x + width].type != 'A'){
 			return true;
@@ -106,9 +107,25 @@ abstract class NPC{
 }
 
 class Player extends NPC{
-	public int y_coord;//camera shit
-	public int x_coord;//camera shit
-
+	private int y_coord;//camera shit
+	private int x_coord;//camera shit
+	
+	private int attack_delay = 0;
+	/**related to attack moves*/
+	private char facing;
+	
+	public char getFacing(){ return facing; }
+	
+	/**Camera related*/
+	public int y_coord(){ return y_coord; }
+	/**Camera related*/
+	public int x_coord(){ return x_coord; }
+	/**Camera related*/
+	public void set_coords(int x, int y){
+		x_coord = x;
+		y_coord = y;
+	}
+	
 	public void init(){
 		speed = 4;
 		height = 18;//sides hitbox split into 5
@@ -118,15 +135,15 @@ class Player extends NPC{
 		stacked_velocity = -44;
 	}
 
-	Player(Map_List M, Char_stats CS){
+	Player(SharedDataLists SDL, Char_stats CS){
 		init();
 		this.CS = CS;
-		this.Maps = M;
+		this.SDL = SDL;
 
-		this.CS.obtain_weapon(Maps.GI.get_w(0));
+		this.CS.obtain_weapon(this.SDL.GI.get_w(0));
 		this.CS.equip_weapon('1');
 
-		Point p = M.map_list[Maps.map_index].player_starting_coords;//to reduce code size...
+		Point p = SDL.map_list[this.SDL.map_index].player_starting_coords;//to reduce code size...
 		shape = new Rectangle(p.x, p.y, width, height);
 		//camera:
 		x_coord = p.x - 300;
@@ -144,12 +161,6 @@ class Player extends NPC{
 		if(y_coord - shape.y > -200 || y_coord - shape.y < -400) return true;
 		return false;
 	}
-
-	/**related to attack moves*/
-	private char facing;
-	public char getFacing(){ return facing; }
-	
-	private int attack_delay = 0;
 	
 	public void actions(int key){
 		//System.out.println(facing);
@@ -158,19 +169,19 @@ class Player extends NPC{
 		if(key == 17 && attack_delay == 0){//ctrl (both sides)
 			if(facing == 'd'){//right
 				//add logic
-				Maps.add_sequence(CS.get_current_weapon_seq());
+				SDL.add_sequence(CS.get_current_weapon_seq());
 				attack_delay = 10;
 			}else{//left
 				//add logic
-				Maps.add_sequence(CS.get_current_weapon_seq());
+				SDL.add_sequence(CS.get_current_weapon_seq());
 				attack_delay = 10;
 			}
 			
-			//if(!Maps.map_list[Maps.map_index].mobs_in_map.isEmpty())
-				//CS.deal_damage(Maps.map_list[Maps.map_index].mobs_in_map.get(0).CS);
+			//if(!SDL.map_list[Maps.map_index].mobs_in_map.isEmpty())
+				//CS.deal_damage(SDL.map_list[Maps.map_index].mobs_in_map.get(0).CS);
 		}
 		if(key == 16){//shift
-			System.out.println(Maps.map_list[Maps.map_index].mobs_in_map.size());
+			System.out.println(SDL.map_list[SDL.map_index].mobs_in_map.size());
 		}
 	}
 
@@ -180,7 +191,7 @@ class Player extends NPC{
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
-		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//reducing code size...
+		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//reducing code size...
 		switch(key){
 		case 65:	
 			facing = 'a';
@@ -252,7 +263,7 @@ class Player extends NPC{
 		}
 		if(isFlying() || jumped){
 			int g = 0;
-			MapNode[][] MN = Maps.map_list[Maps.map_index].map;//to reduce code size...
+			MapNode[][] MN = SDL.map_list[SDL.map_index].map;//to reduce code size...
 			if(velocity > 0){//Falling.
 				boolean ground_below;
 				while(g < velocity){
@@ -300,14 +311,14 @@ class Player extends NPC{
 	}
 
 	private void someNextLevelCheckWow(){	
-		MapNode[][] MN = Maps.map_list[Maps.map_index].map;//fucking code size
+		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//fucking code size
 		if(MN[shape.y - 3][shape.x - 3].type == 'P'
 				|| MN[shape.y - 3][shape.x + width + 3].type == 'P'
 				|| MN[shape.y + height + 3][shape.x - 3].type == 'P'
 				|| MN[shape.y + height + 3][shape.x + width + 3].type == 'P'
 				|| MN[shape.y + (height / 2)][shape.x + width + 5].type == 'P'
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
-			Maps.new_level();
+			SDL.new_level();
 	}
 
 
