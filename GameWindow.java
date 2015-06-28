@@ -40,7 +40,7 @@ public class GameWindow extends JFrame {
         Game2d.in_panel.addKeyListener(keyListener);
         getContentPane().add(Game2d.in_panel);
         validate();
-        game_window.gameLoop.run();
+        game_window.gameLoop.start();
         Game2d.in_panel.requestFocus();
     }
 

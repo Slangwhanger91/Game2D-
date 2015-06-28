@@ -115,7 +115,7 @@ public class Game2d {
 		}//end of paintComponent.
 	}//end of paint panel.
 
-	public class GameLoop {
+	public class GameLoop extends Thread{
 		public void run() {
 			while (KL.get_otherKey() != 27 && Actor.CS.getisAlive()) { //27 = esc
 				try {
