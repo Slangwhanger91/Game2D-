@@ -8,19 +8,22 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
-public class Game2d{
+public class Game2d {
 	private static Player Actor;
 	static private SharedDataLists SDL;
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
-	private JFrame game_window;
-	private static paint_panel in_panel;
-	private static Listener KL = new Listener();
+	public JPanel game_window;
+	public static paint_panel in_panel;
+	//private static Listener KL = new Listener();
+	gameLoop gameLoop = new gameLoop();
+	private Listener KL;
 	private static Settings config;
 	private static int game_speed = 30;//fps
 	
 
 	/**Create the application and run it.*/
-	public Game2d() {
+	public Game2d(Listener KL) {
+		this.KL = KL;
 		config = new Settings("config.properties");
 		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
 		exists "800" is taken as default instead.*/
@@ -36,19 +39,19 @@ public class Game2d{
 
 	/**Initialize the contents of the frame.*/
 	private void initialize() {
-		game_window = new JFrame();
+		game_window = new JPanel();
 		game_window.setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
-		game_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		game_window.getContentPane().setLayout(null);
-		game_window.getContentPane().setBackground(Color.GRAY);
-		game_window.setTitle(config.get("title", "Game2d"));
+		//game_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//game_window.getContentPane().setLayout(null);
+		game_window.setBackground(Color.GRAY);
+		//game_window.setTitle(config.get("title", "Game2d"));
 
 		in_panel = new paint_panel();
 		in_panel.setBackground(Color.WHITE);
 		in_panel.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		game_window.getContentPane().add(in_panel);
+		game_window.add(in_panel);
 
-		game_window.addKeyListener(KL);
+		//game_window.addKeyListener(KL);
 	}
 
 	/**Costume panel class for overriding the paintComponent method of a JPanel.*/
@@ -114,10 +117,14 @@ public class Game2d{
 		}//end of paintComponent.
 	}//end of paint panel.
 
-	static class GameLoop extends Thread{
-		public void run(){
-			while((int)KL.get_otherKey() != 27 && Actor.CS.getisAlive()){ //27 = esc
-				try{Thread.sleep(game_speed);}catch(InterruptedException e){};
+	public class gameLoop extends Thread {
+		public void run() {
+			while ((int) KL.get_otherKey() != 27 && Actor.CS.getisAlive()) { //27 = esc
+				try {
+					Thread.sleep(game_speed);
+				} catch (InterruptedException e) {
+				}
+				;
 				//Actor actions:
 				Actor.movement(KL.get_moveKey());
 				Actor.gravity(KL.get_otherKey());
@@ -128,33 +135,37 @@ public class Game2d{
 				//NPCs actions:
 				ArrayList<Monster> mobs = SDL.map_list[SDL.map_index].mobs_in_map;
 				for (int i = 0; i < mobs.size(); i++) {
-					if(mobs.get(i).CS.getisAlive()){
+					if (mobs.get(i).CS.getisAlive()) {
 						mobs.get(i).AI_movement();
 						mobs.get(i).AI_gravity();
-					}
-					else{
+					} else {
 						mobs.remove(i);
 					}
 				}
 				in_panel.repaint();
 			}//Game loop ends
-			
+
 			System.out.println("GAME OVER, L2P");
-			
-			while((int)KL.get_otherKey() != 27){//Waiting for player to accept defeat/stop crying
-				try{Thread.sleep(game_speed*10);}catch(InterruptedException e){};
+
+			while ((int) KL.get_otherKey() != 27) {//Waiting for player to accept defeat/stop crying
+				try {
+					Thread.sleep(game_speed * 10);
+				} catch (InterruptedException e) {
+				}
+				;
 			}
 			System.exit(0);
 		}
 	}
 
-
 	/**Launch the application.*/
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Game2d window = new Game2d();
+					window.game_window.setLocationRelativeTo(null); // centers window when spawned
 					window.game_window.setVisible(true);
 					GameLoop game_loop = new GameLoop();
 					game_loop.start();
@@ -164,4 +175,5 @@ public class Game2d{
 			}
 		});
 	}
+	*/
 }
