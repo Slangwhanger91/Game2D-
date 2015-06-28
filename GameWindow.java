@@ -1,11 +1,10 @@
-/**
- * Created by aperte on 28.06.2015.
- */
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+@SuppressWarnings("serial")
 public class GameWindow extends JFrame {
     Game2d game_window;
     private static Listener keyListener = new Listener();
@@ -32,28 +31,25 @@ public class GameWindow extends JFrame {
         // setBackground(Color.GRAY);
         setTitle(config.get("title", "Game2d-menu"));
         setLocationRelativeTo(null); // centers window
+        setVisible(true);
     }
 
     void startGame() {
         getContentPane().removeAll();
         game_window = new Game2d(keyListener);
-        game_window.in_panel.addKeyListener(keyListener);
-        getContentPane().add(game_window.in_panel);
+        Game2d.in_panel.addKeyListener(keyListener);
+        getContentPane().add(Game2d.in_panel);
         validate();
-        game_window.gameLoop.start();
-        game_window.in_panel.requestFocus();
-    }
-
-    public void start() {
-        setVisible(true);
+        game_window.gameLoop.run();
+        Game2d.in_panel.requestFocus();
     }
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GameWindow window = new GameWindow();
-                    window.start();
+                    @SuppressWarnings("unused")
+					GameWindow window = new GameWindow();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

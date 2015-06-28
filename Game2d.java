@@ -1,10 +1,8 @@
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
@@ -15,11 +13,11 @@ public class Game2d {
 	public JPanel game_window;
 	public static paint_panel in_panel;
 	//private static Listener KL = new Listener();
-	gameLoop gameLoop = new gameLoop();
+	GameLoop gameLoop = new GameLoop();
 	private Listener KL;
 	private static Settings config;
 	private static int game_speed = 30;//fps
-	
+
 
 	/**Create the application and run it.*/
 	public Game2d(Listener KL) {
@@ -33,7 +31,7 @@ public class Game2d {
 		SDL.initialize_monsters();
 		Actor = new Player(SDL, new Char_stats("Playa", 100, 30, 0, 1));
 		SDL.set_actor_once(Actor);
-		
+
 		initialize();//initializing frames and panels
 	}
 
@@ -57,9 +55,9 @@ public class Game2d {
 	/**Costume panel class for overriding the paintComponent method of a JPanel.*/
 	@SuppressWarnings("serial")
 	class paint_panel extends JPanel{
-		
+
 		private final int portal_resize = 5;
-		
+
 		paint_panel(){
 			super();
 		}
@@ -110,21 +108,19 @@ public class Game2d {
 							Actor.shape.y - Actor.y_coord() + Actor.height/2,
 							img, 2);
 				}
-				
+
 				if(seq.isEmpty())
 					SDL.image_sequences.remove(i);
 			}
 		}//end of paintComponent.
 	}//end of paint panel.
 
-	public class gameLoop extends Thread {
+	public class GameLoop {
 		public void run() {
-			while ((int) KL.get_otherKey() != 27 && Actor.CS.getisAlive()) { //27 = esc
+			while (KL.get_otherKey() != 27 && Actor.CS.getisAlive()) { //27 = esc
 				try {
 					Thread.sleep(game_speed);
-				} catch (InterruptedException e) {
-				}
-				;
+				} catch (InterruptedException e) {}
 				//Actor actions:
 				Actor.movement(KL.get_moveKey());
 				Actor.gravity(KL.get_otherKey());
@@ -147,33 +143,12 @@ public class Game2d {
 
 			System.out.println("GAME OVER, L2P");
 
-			while ((int) KL.get_otherKey() != 27) {//Waiting for player to accept defeat/stop crying
+			while (KL.get_otherKey() != 27) {//Waiting for player to accept defeat/stop crying
 				try {
 					Thread.sleep(game_speed * 10);
-				} catch (InterruptedException e) {
-				}
-				;
+				} catch (InterruptedException e) {};
 			}
 			System.exit(0);
 		}
 	}
-
-	/**Launch the application.*/
-	/*
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Game2d window = new Game2d();
-					window.game_window.setLocationRelativeTo(null); // centers window when spawned
-					window.game_window.setVisible(true);
-					GameLoop game_loop = new GameLoop();
-					game_loop.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
 }

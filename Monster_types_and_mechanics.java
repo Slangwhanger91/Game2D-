@@ -56,10 +56,8 @@ class Monster extends NPC{
 
 	public void AI_gravity(){
 		double j = Math.random();
-		int key;
-
+		int key = -1;
 		if(j > 0.90) key = 32;//10% per frame to jump
-		else key = -1;
 
 		gravity(key);//gravity mechanics + option to jump
 	}
