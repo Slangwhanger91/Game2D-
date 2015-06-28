@@ -37,11 +37,11 @@ public class GameWindow extends JFrame {
     void startGame() {
         getContentPane().removeAll();
         game_window = new Game2d(keyListener);
-        Game2d.in_panel.addKeyListener(keyListener);
-        getContentPane().add(Game2d.in_panel);
+        game_window.in_panel.addKeyListener(keyListener);
+        getContentPane().add(game_window.in_panel);
         validate();
         game_window.gameLoop.start();
-        Game2d.in_panel.requestFocus();
+        game_window.in_panel.requestFocus();
     }
 
     public static void main(String[] args) {
