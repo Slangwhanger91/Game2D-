@@ -109,13 +109,13 @@ abstract class NPC{
 class Player extends NPC{
 	private int y_coord;//camera shit
 	private int x_coord;//camera shit
-	
+
 	private int attack_delay = 0;
 	/**related to attack moves*/
 	private char facing;
-	
+
 	public char getFacing(){ return facing; }
-	
+
 	/**Camera related*/
 	public int y_coord(){ return y_coord; }
 	/**Camera related*/
@@ -125,7 +125,7 @@ class Player extends NPC{
 		x_coord = x;
 		y_coord = y;
 	}
-	
+
 	public void init(){
 		speed = 4;
 		height = 18;//sides hitbox split into 5
@@ -161,29 +161,53 @@ class Player extends NPC{
 		if(y_coord - shape.y > -200 || y_coord - shape.y < -400) return true;
 		return false;
 	}
-	
-	public void actions(int key){
-		//System.out.println(facing);
-		if(attack_delay > 0) attack_delay--;
-		
-		if(key == 17 && attack_delay == 0){//ctrl (both sides)
-			if(facing == 'd'){//right
-				//add logic
-				SDL.add_sequence(CS.get_current_weapon_seq());
-				attack_delay = 10;
-			}else{//left
-				//add logic
-				SDL.add_sequence(CS.get_current_weapon_seq());
-				attack_delay = 10;
-			}
-			
-			//if(!SDL.map_list[Maps.map_index].mobs_in_map.isEmpty())
-				//CS.deal_damage(SDL.map_list[Maps.map_index].mobs_in_map.get(0).CS);
-		}
-		if(key == 16){//shift
-			System.out.println(SDL.map_list[SDL.map_index].mobs_in_map.size());
+
+	private void attackRight(Monster M, boolean within_y){
+		if(M.shape.x + M.shape.width > this.shape.x + this.shape.width //checking weapon base
+				&& M.shape.x <= //checking weapon edge
+				this.shape.x + this.shape.width + this.CS.getWeaponRange()
+				&& within_y){
+			this.CS.deal_damage(M.CS);
+			System.out.println("HIT (right)");
 		}
 	}
+
+	private void attackLeft(Monster M, boolean within_y){
+		if(M.shape.x < this.shape.x //checking weapon base
+				&& M.shape.x + M.shape.width >= //checking weapon edge
+				this.shape.x - this.CS.getWeaponRange()
+				&& within_y){
+			this.CS.deal_damage(M.CS);
+			System.out.println("HIT (left)");
+		}
+	}
+
+	private void attack(){
+		for (Monster M : SDL.map_list[SDL.map_index].mobs_in_map) {
+			int weapon_y_axis = this.shape.y + this.height/2;
+			boolean within_y = (M.shape.y <= weapon_y_axis) 
+					&& (M.shape.y + M.shape.height >= weapon_y_axis);
+			if(facing == 'd') 
+				attackRight(M, within_y);
+			else 
+				attackLeft(M, within_y);
+		}
+	}
+
+	public void actions(int key){
+		if(attack_delay > 0) attack_delay--;
+		if(key == 17 && attack_delay == 0 ){ //ctrl (both sides)
+			SDL.add_sequence(CS.get_current_weapon_seq());
+			attack_delay = CS.getWeaponCD();
+			attack();
+		}
+		if(attack_delay == CS.getWeaponCD() -3)
+			attack(); //consistency with animation
+		/*if(key == 16){//shift
+			System.out.println(SDL.map_list[SDL.map_index].mobs_in_map.size());
+		}*/
+	}
+	
 
 	@Override
 	/**a:65, d:68*/
