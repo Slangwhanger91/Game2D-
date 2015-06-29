@@ -18,6 +18,7 @@ public class GameWindow extends JFrame {
         WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
         WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 
+        /*
         JButton startButton = new JButton("Start game");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -25,6 +26,10 @@ public class GameWindow extends JFrame {
             }
         });
         getContentPane().add(startButton);
+        */
+        GameMenu menu = new GameMenu(this);
+        getContentPane().add(menu);
+        pack();
 
         setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
