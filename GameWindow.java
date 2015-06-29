@@ -1,8 +1,6 @@
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
 public class GameWindow extends JFrame {
@@ -17,25 +15,22 @@ public class GameWindow extends JFrame {
         config = new Settings("config.properties");
         WINDOW_WIDTH = Integer.parseInt(config.get("width", "800"));
         WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
-
-        /*
-        JButton startButton = new JButton("Start game");
-        startButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                startGame();
-            }
-        });
-        getContentPane().add(startButton);
-        */
-        GameMenu menu = new GameMenu(this);
-        getContentPane().add(menu);
-        pack();
+        int show_menu = Integer.parseInt(config.get("show_menu", "1"));
 
         setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        // setBackground(Color.GRAY);
         setTitle(config.get("title", "Game2d-menu"));
         setLocationRelativeTo(null); // centers window
+        setResizable(false);
+
+        if (show_menu > 0) {
+            GameMenu menu = new GameMenu(this);
+            getContentPane().add(menu);
+            pack();
+        } else {
+            startGame();
+        }
+
         setVisible(true);
     }
 

@@ -2,6 +2,7 @@
 out/
 *.psd
 *.bmp
+*.mp3
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
