@@ -4,13 +4,13 @@ public class Char_stats {
 	private ArrayList<Weapon> weapons;
 	private Weapon current_weapon;
 	private int weapon_index;//weapon slot
-	
+
 	private int max_health;
 	private int health;
 
 	private int max_mana;
 	private int mana;
-	
+
 	private int armor;
 	private int attack_damage;//mainly for mobs
 	private String name;
@@ -19,10 +19,13 @@ public class Char_stats {
 	private void isAliveCheck(){
 		if(health <= 0) alive = false;
 	}
-	
+
 	public boolean getisAlive(){ return alive; }
 	public int getHealth(){ return health; }
 	public int getMana(){ return mana; }
+	public int getWeaponRange(){ return current_weapon.get_range(); }
+	/**'Cooldown' after every attack (measured by frames).*/
+	public int getWeaponCD(){ return current_weapon.get_CD(); }
 	public int[] get_current_weapon_seq(){
 		return current_weapon.getSequence();
 	}
@@ -120,7 +123,7 @@ public class Char_stats {
 			}
 			break;
 		}
-		
+
 		if(current_weapon != null){
 			attack_damage -= current_weapon.get_dmg();
 		}
@@ -134,15 +137,17 @@ class Weapon{
 	private String name;
 	private int dmg_bonus;
 	private int range;
+	private int cd;//cooldown
 	private int degree_a, degree_b;//from - to: f.e 1 to 90 would be a slash from
 	//above the player into a straight line where the player is facing.
 	private int[] sequence;
 
-	public Weapon(String name, int dmg_bonus, int range, int degree_a, 
-			int degree_b, int[] atk_seq){
+	public Weapon(String name, int dmg_bonus, int range, int cd,
+			int degree_a, int degree_b, int[] atk_seq){
 		this.name = name;
 		this.dmg_bonus = dmg_bonus;
 		this.range = range;
+		this.cd = cd;
 		this.degree_a = degree_a;
 		this.degree_b = degree_b;
 		this.sequence = atk_seq;
@@ -150,6 +155,7 @@ class Weapon{
 
 	public int get_dmg(){ return dmg_bonus; }
 	public int get_range(){ return range; }
+	public int get_CD(){ return cd; }
 	public int get_da(){ return degree_a; }
 	public int get_db(){ return degree_b; }
 	public int[] getSequence(){ return sequence; }
@@ -157,7 +163,8 @@ class Weapon{
 }
 
 class Equipment{
-	/**0: head
+	/**
+	 * 0: head
 	 * <br>1: arms
 	 * <br>2: chest
 	 * <br>3: legs
@@ -200,7 +207,7 @@ class GameItems{
 		}
 		//=================================================================
 		//add weapons:
-		all_weapons.add(new Weapon("Slayer of Nothing", 200, 10, 90, 90, 
+		all_weapons.add(new Weapon("Slayer of Nothing", 200, 50, 10, 90, 90, 
 				new int[]{15, 35, 50, 45, 25}));
 		//System.out.println("w1: "+all_weapons.get(0));
 		//=================================================================

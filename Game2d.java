@@ -7,21 +7,20 @@ import javax.swing.JPanel;
 
 
 public class Game2d {
-	private static Player Actor;
-	static private SharedDataLists SDL;
-	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
+	public GameLoop gameLoop;
 	public JPanel game_window;
-	public static paint_panel in_panel;
-	//private static Listener KL = new Listener();
-	GameLoop gameLoop = new GameLoop();
+	public paint_panel in_panel;
+	private Player Actor;
+	private SharedDataLists SDL;
 	private Listener KL;
-	private static Settings config;
-	private static int game_speed = 30;//fps
-
-
+	private Settings config;
+	private final int game_speed = 30;//fps
+	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
+	
 	/**Create the application and run it.*/
 	public Game2d(Listener KL) {
 		this.KL = KL;
+		gameLoop = new GameLoop();
 		config = new Settings("config.properties");
 		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
 		exists "800" is taken as default instead.*/
@@ -71,11 +70,16 @@ public class Game2d {
 				switch(PRN.type){
 				case 'G':
 					g.setColor(Color.GREEN);
-					g.fillRect(PRN.rect.x - Actor.x_coord(), PRN.rect.y - Actor.y_coord(), PRN.rect.width, PRN.rect.height);
+					g.fillRect(PRN.rect.x - Actor.x_coord(), 
+							PRN.rect.y - Actor.y_coord(), PRN.rect.width, 
+							PRN.rect.height);
 					break;
 				case 'P':
 					g.setColor(Color.YELLOW);
-					g.fillOval(PRN.rect.x - Actor.x_coord() - portal_resize, PRN.rect.y - Actor.y_coord() - portal_resize, PRN.rect.width + (portal_resize*2), PRN.rect.height + (portal_resize*2));
+					g.fillOval(PRN.rect.x - Actor.x_coord() - portal_resize, 
+							PRN.rect.y - Actor.y_coord() - portal_resize, 
+							PRN.rect.width + (portal_resize*2), 
+							PRN.rect.height + (portal_resize*2));
 					break;
 				}
 			}
@@ -84,7 +88,8 @@ public class Game2d {
 			g.setColor(Color.MAGENTA);//why's purple called "magneta", who knows..
 			for(Monster MOB : SDL.map_list[SDL.map_index].mobs_in_map){
 				Rectangle R = MOB.shape;
-				g.fillRect(R.x - Actor.x_coord(), R.y - Actor.y_coord(), R.width, R.height);
+				g.fillRect(R.x - Actor.x_coord(), R.y - Actor.y_coord(), 
+						R.width, R.height);
 			}
 			//
 			//painting main character
@@ -92,11 +97,12 @@ public class Game2d {
 			g.fillRect(Actor.shape.x - Actor.x_coord(), 
 					Actor.shape.y - Actor.y_coord(), Actor.width, Actor.height);
 			//
-			//weapon:
+			//weapon related animations:
 			g.setColor(Color.BLUE);
 			ArrayList<Integer> seq;
 			for (int i = 0; i < SDL.image_sequences.size(); i++) {
 				seq = SDL.image_sequences.get(i);
+				
 				if(Actor.getFacing() == 'd'){
 					g.fillRect(Actor.shape.x - Actor.x_coord() + Actor.width, 
 							Actor.shape.y - Actor.y_coord() + Actor.height/2,

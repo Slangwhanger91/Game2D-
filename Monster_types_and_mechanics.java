@@ -51,6 +51,7 @@ class Monster extends NPC{
 		}
 
 		//====================================================
+		//move = false;
 		if(move) movement(direction);//try to reach the player
 	}
 
@@ -167,7 +168,7 @@ class Monster extends NPC{
 
 	@Override
 	public void init() {
-		speed = 4;
+		speed = (int)(Math.random() * 4 + 1);
 		height = 18;//sides hitbox split into 5
 		width = 12;//buttom/top hitbox split into 4
 		velocity = 0;
