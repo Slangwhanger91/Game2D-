@@ -1,14 +1,15 @@
-import javax.swing.*;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
-import java.awt.*;
-
-@SuppressWarnings("serial")
-public class GameWindow extends JFrame {
+public class GameWindow extends Application {
     Game2d game_window;
     private static Listener keyListener = new Listener();
+    StackPane root;
 
-    GameWindow() {
-        super();
+    @Override
+    public void start(Stage stage) {
         Settings config;
         final int WINDOW_WIDTH, WINDOW_HEIGHT;
 
@@ -17,24 +18,28 @@ public class GameWindow extends JFrame {
         WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
         int show_menu = Integer.parseInt(config.get("show_menu", "1"));
 
-        setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle(config.get("title", "Game2d-menu"));
-        setLocationRelativeTo(null); // centers window
-        setResizable(false);
-
+        root = new StackPane();
         if (show_menu > 0) {
-            GameMenu menu = new GameMenu(this);
-            getContentPane().add(menu);
-            pack();
+            GameMenu menu = new GameMenu(this, stage);
+            stage.setScene(menu.scene);
         } else {
-            startGame();
+           // TODO: Add no menu option
+            stage.setScene(new Scene(root, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40));
         }
 
-        setVisible(true);
+        stage.setTitle(config.get("title", "The amazing adventures of BOX"));
+        stage.show();
+
+        //setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
+        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        //setTitle(config.get("title", "Game2d-menu"));
+        //setLocationRelativeTo(null); // centers window
+        //setResizable(false);
+
     }
 
     void startGame() {
+        /*
         getContentPane().removeAll();
         game_window = new Game2d(keyListener);
         game_window.in_panel.addKeyListener(keyListener);
@@ -42,18 +47,10 @@ public class GameWindow extends JFrame {
         validate();
         game_window.gameLoop.start();
         game_window.in_panel.requestFocus();
+        */
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    @SuppressWarnings("unused")
-					GameWindow window = new GameWindow();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        launch(args);
     }
 }
