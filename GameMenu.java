@@ -50,7 +50,7 @@ public class GameMenu  {
         }
         catch (IOException ioe) {
             System.out.println("Failed to read menu files. Skipping menu.");
-            master.startGame();
+            master.startGame(stage);
             return;
         }
 
@@ -73,7 +73,7 @@ public class GameMenu  {
         startButton.addEventHandler(MouseEvent.MOUSE_EXITED,
                 event -> startButton.setGraphic(new ImageView(button_normal_start)));
         startButton.addEventHandler(MouseEvent.MOUSE_PRESSED,
-                event -> master.startGame());
+                event -> master.startGame(stage));
 
         Button mapsButton = new Button();
         mapsButton.setGraphic(new ImageView(button_normal_maps));

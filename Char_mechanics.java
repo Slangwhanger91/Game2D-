@@ -1,3 +1,7 @@
+//import javafx.scene.input.KeyCode;
+
+import javafx.scene.input.KeyCode;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.LinkedList;
@@ -38,8 +42,8 @@ abstract class NPC{
 	/**<u>initializes:</u> <br>speed, <br>velocity, <br>stacked_velocity, <br>height,
 	 * <br>width, <br>previous_step(PSN).*/
 	public abstract void init();
-	public abstract void movement(int key);
-	public abstract void gravity(int key);
+	public abstract void movement(KeyCode key);
+	public abstract void gravity(KeyCode key);
 
 	public boolean isFlying(){
 		for (int i = 0; i <= width; i+=3) {
@@ -194,9 +198,9 @@ class Player extends NPC{
 		}
 	}
 
-	public void actions(int key){
+	public void actions(KeyCode key){
 		if(attack_delay > 0) attack_delay--;
-		if(key == 17 && attack_delay == 0 ){ //ctrl (both sides)
+		if(key == KeyCode.CONTROL && attack_delay == 0 ){ //ctrl (both sides)
 			SDL.add_sequence(CS.get_current_weapon_seq());
 			attack_delay = CS.getWeaponCD();
 			attack();
@@ -211,13 +215,15 @@ class Player extends NPC{
 
 	@Override
 	/**a:65, d:68*/
-	public void movement(int key) {
+	public void movement(KeyCode key) {
+		if (key == null) return;
+		//System.out.println(key);
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
 		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//reducing code size...
 		switch(key){
-		case 65:	
+		case A:
 			facing = 'a';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
@@ -228,7 +234,7 @@ class Player extends NPC{
 				if(!climb) speed--;
 			}
 
-			boolean LB = left_bump(hill_tolerance); 
+			boolean LB = left_bump(hill_tolerance);
 			if(LB){
 				shape.y -= hill_tolerance;
 				if(y_camera_pos())
@@ -245,7 +251,7 @@ class Player extends NPC{
 			}
 			break;
 
-		case 68:
+		case D:
 			facing = 'd';
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x + speed + width].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
@@ -277,10 +283,10 @@ class Player extends NPC{
 
 	@Override
 	/**space:32*/
-	public void gravity(int key) {
+	public void gravity(KeyCode key) {
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
-		if((!isFlying() || downhill()) && key == 32){
+		if((!isFlying() || downhill()) && key == KeyCode.SPACE){
 			velocity = -14;
 			stacked_velocity = -44;
 			jumped = true;

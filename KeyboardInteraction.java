@@ -1,47 +1,50 @@
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+//import java.awt.event.KeyEvent;
+//import java.awt.event.KeyListener;
+
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class KeyboardInteraction {}
 
-class Listener implements KeyListener{
-	private int moveKey;
-	private int otherKey;
-	private boolean isHolding;
+class Listener {
+	private static KeyCode moveKey;
+	private static KeyCode otherKey;
+	private static boolean isHolding;
 
 	Listener(){
-		moveKey = -1;
-		otherKey = -1;
+		moveKey = null;
+		otherKey = null;
 		isHolding = false;
 	}
 
-	public int get_moveKey(){
+	public static KeyCode get_moveKey(){
 		return moveKey;
 	}
 
-	public int get_otherKey(){
+	public static KeyCode get_otherKey(){
 		return otherKey;
 	}
 
-	public void keyPressed(KeyEvent e) {
+	public static void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
-		//System.out.println(e.getKeyCode());
-		if(e.getKeyCode() == 65 || e.getKeyCode() == 68){//'a', 'd'
+		//System.out.println(e.getCode().ordinal());
+		if(e.getCode() == KeyCode.A || e.getCode() == KeyCode.D){//'a', 'd'
 			//	System.out.println("holding:"+isHolding);
-			if(moveKey != -1 && moveKey != e.getKeyCode())
+			if(moveKey != null && moveKey != e.getCode())
 				isHolding = true;
-			moveKey = e.getKeyCode();
-		}else otherKey = e.getKeyCode();
+			moveKey = e.getCode();
+		}else otherKey = e.getCode();
 
 	}
 
-	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == 65 || e.getKeyCode() == 68){//'a', 'd'
+	public static void keyReleased(KeyEvent e) {
+		if(e.getCode() == KeyCode.A || e.getCode() == KeyCode.D){//'a', 'd'
 			if(!isHolding)
-				moveKey = -1;
+				moveKey = null;
 			else isHolding = false;
 		}
-		if(e.getKeyCode() == 32 || e.getKeyCode() == 17)//space or ctrl
-			otherKey = -1;
+		if(e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.CONTROL)//space or ctrl
+			otherKey = null;
 	}
 
 	public void keyTyped(KeyEvent e) {}

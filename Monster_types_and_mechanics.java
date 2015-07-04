@@ -1,3 +1,5 @@
+import javafx.scene.input.KeyCode;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -6,7 +8,7 @@ public class Monster_types_and_mechanics {}
 
 class Monster extends NPC{
 
-	private int direction = -1;
+	private KeyCode direction = null;
 
 	/**
 	 * @param SDL - connection with the map
@@ -28,13 +30,13 @@ class Monster extends NPC{
 		if(c.x + c.width < shape.x){
 			if(!isFlying()){
 				if(shape.x - (c.x + c.width) > 350) move = false;
-				else direction = 65;//'a'
+				else direction = KeyCode.A;//'a'
 			}
 		}
 		else if(c.x > shape.x + shape.width){
 			if(!isFlying()){
 				if(c.x - (shape.x + shape.width) > 350) move = false;
-				else direction = 68;//'d'
+				else direction = KeyCode.D;//'d'
 			}
 		}
 		else if((c.y > shape.y && c.y < shape.y + shape.height)
@@ -57,21 +59,22 @@ class Monster extends NPC{
 
 	public void AI_gravity(){
 		double j = Math.random();
-		int key = -1;
-		if(j > 0.90) key = 32;//10% per frame to jump
+		KeyCode key = null;
+		if(j > 0.90) key = KeyCode.SPACE;//10% per frame to jump
 
 		gravity(key);//gravity mechanics + option to jump
 	}
 
 	@Override
-	public void movement(int direction) {
+	public void movement(KeyCode direction) {
+		if (direction == null) return;
 
 		final int SPEED = speed;
 		boolean climb = false;
 		int hill_tolerance = 0;
 		MapNode[][] MN = SDL.map_list[SDL.map_index].map;//reducing code size...
 		switch(direction){
-		case 65://'a'	
+		case A://'a'
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x - speed].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x - speed].type == 'A'){
@@ -93,7 +96,7 @@ class Monster extends NPC{
 			}
 			break;
 
-		case 68://'d'
+		case D://'d'
 			while(!climb && speed > 0 && MN[shape.y + height-1][shape.x + speed + width].type != 'A'){
 				for (hill_tolerance = 2; !climb && hill_tolerance < 6; hill_tolerance++) {
 					if(MN[shape.y + height - hill_tolerance -1][shape.x + speed + width].type == 'A'){
@@ -118,10 +121,10 @@ class Monster extends NPC{
 	}
 
 	@Override
-	public void gravity(int key) {
+	public void gravity(KeyCode key) {
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
-		if((!isFlying() || downhill()) && key == 32){//32 == space
+		if((!isFlying() || downhill()) && key == KeyCode.SPACE){//32 == space
 			velocity = -14;
 			jumped = true;
 		}

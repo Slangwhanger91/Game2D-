@@ -1,12 +1,14 @@
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.awt.event.KeyListener;
 
 public class GameWindow extends Application {
     Game2d game_window;
     private static Listener keyListener = new Listener();
-    StackPane root;
+    Group root;
 
     @Override
     public void start(Stage stage) {
@@ -18,7 +20,7 @@ public class GameWindow extends Application {
         WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
         int show_menu = Integer.parseInt(config.get("show_menu", "1"));
 
-        root = new StackPane();
+        root = new Group();
         if (show_menu > 0) {
             GameMenu menu = new GameMenu(this, stage);
             stage.setScene(menu.scene);
@@ -38,7 +40,10 @@ public class GameWindow extends Application {
 
     }
 
-    void startGame() {
+    void startGame(Stage stage) {
+        Listener KL = new Listener();
+        Game2d game = new Game2d(KL);
+        stage.setScene(game.scene);
         /*
         getContentPane().removeAll();
         game_window = new Game2d(keyListener);
