@@ -1,4 +1,7 @@
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -6,6 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -48,10 +52,20 @@ public class Game2d {
 				event -> Listener.keyReleased(event));
 
 		g = game_window.getGraphicsContext2D();
+
+		final Duration frameDuration = Duration.millis(1000/30);
+		final KeyFrame keyFrame = new KeyFrame(frameDuration,
+				event -> tick());
+
+		Timeline gameLoop = new Timeline(30, keyFrame);
+		gameLoop.setCycleCount(Animation.INDEFINITE);
+		gameLoop.play();
+				/*
 		gameLoop = new GameLoop();
 		gameLoop.start();
 		reset();
 		update();
+		*/
 	}
 
 	/*
@@ -127,6 +141,28 @@ public class Game2d {
 			if(seq.isEmpty())
 				SDL.image_sequences.remove(i);
 		}
+	}
+
+	private void tick() {
+		//Actor actions:
+		Actor.movement(Listener.get_moveKey());
+		Actor.gravity(Listener.get_otherKey());
+		Actor.actions(Listener.get_otherKey());
+		//System.out.println("x coords: " + Actor.x_coord);
+		//System.out.println("shape x: " + Actor.shape.x);
+		//
+		//NPCs actions:
+		ArrayList<Monster> mobs = SDL.map_list[SDL.map_index].mobs_in_map;
+		for (int i = 0; i < mobs.size(); i++) {
+			if (mobs.get(i).charStats.isAlive()) {
+				mobs.get(i).AI_movement();
+				mobs.get(i).AI_gravity();
+			} else {
+				mobs.remove(i);
+			}
+		}
+		reset();
+		update();
 	}
 
 	public class GameLoop extends Thread{

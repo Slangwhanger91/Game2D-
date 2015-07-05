@@ -171,7 +171,7 @@ public class Map {
 
 	// Used to convert bitmap bytes into integers
 	int bytesToInt(int offset, int byteCount, byte[] bytes) {
-		ByteBuffer bb = ByteBuffer.allocate(a);
+		ByteBuffer bb = ByteBuffer.allocate(byteCount);
 		bb.order(ByteOrder.LITTLE_ENDIAN); // bitmap uses little endian
 		for (int i = 0; i < byteCount && i < bytes.length; i++) {
 			bb.put(bytes[i+offset]);
