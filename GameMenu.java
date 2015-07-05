@@ -95,13 +95,10 @@ public class GameMenu  {
 
         Button[] buttons = {startButton, mapsButton, exitButton};
         for (Button b: buttons) {
-            //b.setBorder(null);
-            //b.setPrefSize(240, 64);
-            //b.setMaxSize(240, 64);
-            //b.setMinSize(240, 64);
             b.setPadding(new Insets(0, 0, -1, 0)); // remove weird white border at bottom
             // of all elements in vbox
             b.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+            // removes focus border on buttons
         }
         VBox.setMargin(exitButton, new Insets(1, 0, 0, 0));
         // compensates for 9px separator between two last buttons

@@ -55,10 +55,11 @@ class Listener {
 		if(e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.CONTROL)//space or ctrl
 			otherKey = null;
 	}
-
-	public void keyTyped(KeyEvent e) {}
 }
 
+/*	Interface used to define how lambdas used in keymap are to be used
+	usage: keymap.put(KeyCode.A, () -> System.out.println("'a' was pressed!"));
+*/
 interface KeyBindAction {
 	void run();
 }

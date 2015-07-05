@@ -26,13 +26,6 @@ public class Map {
 	 * that index is none, the value should be <b>-1</b>*/
 	public int next_map_index;
 
-	public int getMaxMapWidth(){
-		return MAP_WIDTH;
-	}
-	public int getMaxMapHeight(){
-		return MAP_HEIGHT;
-	}
-
 	private void build_toPaint(){//Might be messy, but it's only done once every map we load :P
 		toPaint = new ArrayList<PaintRectNode>();
 		for (int i = 0; i < MAP_HEIGHT; i++) {

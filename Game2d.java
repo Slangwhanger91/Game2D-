@@ -20,6 +20,7 @@ public class Game2d {
 	private SharedDataLists SDL;
 	private Settings config;
 	//private final int game_speed = 30;//fps
+	private final double fps = 60;
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
 
 	public Scene scene;
@@ -42,17 +43,17 @@ public class Game2d {
 		root = new Group();
 		scene = new Scene(root);
 
-		final Duration frameDuration = Duration.millis(1000/30);
+		final Duration frameDuration = Duration.millis(1000/fps);
 		final KeyFrame keyFrame = new KeyFrame(frameDuration,
 				event -> tick());
 
-		gameLoop = new Timeline(30, keyFrame);
+		gameLoop = new Timeline(fps, keyFrame);
 		gameLoop.setCycleCount(Animation.INDEFINITE);
 
 		// give access to this object from Listener
 		Listener.controller = this;
 
-		// keybinds
+		// keybindings
 		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.pause());
 
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
