@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-// bitmap thingathings
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -171,11 +170,11 @@ public class Map {
 	}
 
 	// Used to convert bitmap bytes into integers
-	int bytesToInt(int s, int a, byte[] arr) {
+	int bytesToInt(int offset, int byteCount, byte[] bytes) {
 		ByteBuffer bb = ByteBuffer.allocate(a);
 		bb.order(ByteOrder.LITTLE_ENDIAN); // bitmap uses little endian
-		for (int i = 0; i < a && i < arr.length; i++) {
-			bb.put(arr[i+s]);
+		for (int i = 0; i < byteCount && i < bytes.length; i++) {
+			bb.put(bytes[i+offset]);
 		}
 		bb.flip();
 		return bb.getInt();
