@@ -1,8 +1,7 @@
-//import java.awt.event.KeyEvent;
-//import java.awt.event.KeyListener;
-
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
+import java.util.HashMap;
 
 
 @SuppressWarnings("restriction")
@@ -13,6 +12,8 @@ class Listener {
 	private static KeyCode moveKey;
 	private static KeyCode otherKey;
 	private static boolean isHolding;
+	static Game2d controller;
+	static HashMap<KeyCode, KeyBindAction> keymap = new HashMap<>();
 
 	public Listener(){
 		moveKey = null;
@@ -36,7 +37,12 @@ class Listener {
 			if(moveKey != null && moveKey != e.getCode())
 				isHolding = true;
 			moveKey = e.getCode();
-		}else otherKey = e.getCode();
+		} else if (keymap.containsKey(e.getCode())) {
+			KeyBindAction tmp = keymap.get(e.getCode());
+			tmp.run();
+		} else {
+			otherKey = e.getCode();
+		}
 
 	}
 
@@ -51,4 +57,8 @@ class Listener {
 	}
 
 	public void keyTyped(KeyEvent e) {}
+}
+
+interface KeyBindAction {
+	void run();
 }

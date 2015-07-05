@@ -15,18 +15,17 @@ import java.util.ArrayList;
 
 @SuppressWarnings("restriction")
 public class Game2d {
-	private GameLoop gameLoop;
 	private Canvas game_window;
 	private Player Actor;
 	private SharedDataLists SDL;
 	private Settings config;
-	private final int game_speed = 30;//fps
+	//private final int game_speed = 30;//fps
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
 
-	// javafx
 	public Scene scene;
 	private Group root;
 	private GraphicsContext g;
+	Timeline gameLoop;
 
 	/**Create the application and run it.*/
 	public Game2d() {
@@ -40,9 +39,21 @@ public class Game2d {
 		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
 		SDL.set_actor_once(Actor);
 
-		//initialize();//initializing frames and panels
 		root = new Group();
 		scene = new Scene(root);
+
+		final Duration frameDuration = Duration.millis(1000/30);
+		final KeyFrame keyFrame = new KeyFrame(frameDuration,
+				event -> tick());
+
+		gameLoop = new Timeline(30, keyFrame);
+		gameLoop.setCycleCount(Animation.INDEFINITE);
+
+		// give access to this object from Listener
+		Listener.controller = this;
+
+		// keybinds
+		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.pause());
 
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(game_window);
@@ -53,33 +64,20 @@ public class Game2d {
 
 		g = game_window.getGraphicsContext2D();
 
-		final Duration frameDuration = Duration.millis(1000/30);
-		final KeyFrame keyFrame = new KeyFrame(frameDuration,
-				event -> tick());
-
-		Timeline gameLoop = new Timeline(30, keyFrame);
-		gameLoop.setCycleCount(Animation.INDEFINITE);
 		gameLoop.play();
-				/*
-		gameLoop = new GameLoop();
-		gameLoop.start();
-		reset();
-		update();
-		*/
 	}
 
-	/*
-	private void initialize() {
-		//game_window = new JPanel();
-		game_window = new Canvas();
-		//game_window.setBounds(0, 0, WINDOW_WIDTH + 20, WINDOW_HEIGHT + 40);
-
-		in_panel = new paint_panel();
-		//in_panel.setBackground(Color.WHITE);
-		//in_panel.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		//game_window.add(in_panel);
+	private void pause() {
+		Listener.keymap.put(KeyCode.ESCAPE,
+				() -> Listener.controller.unpause());
+		gameLoop.pause();
 	}
-	 */
+
+	private void unpause() {
+		Listener.keymap.put(KeyCode.ESCAPE,
+				() -> Listener.controller.pause());
+		gameLoop.play();
+	}
 
 	private void reset() {
 		//System.out.println("reset");
@@ -143,6 +141,7 @@ public class Game2d {
 		}
 	}
 
+	/* Method called once every frame. Performance! */
 	private void tick() {
 		//Actor actions:
 		Actor.movement(Listener.get_moveKey());
@@ -163,44 +162,5 @@ public class Game2d {
 		}
 		reset();
 		update();
-	}
-
-	public class GameLoop extends Thread{
-		public void run() {		
-			while (Listener.get_otherKey() != KeyCode.ESCAPE && Actor.charStats.isAlive()) { //27 = esc
-				try {
-					Thread.sleep(game_speed);
-				} catch (InterruptedException e) {}
-				//Actor actions:
-				Actor.movement(Listener.get_moveKey());
-				Actor.gravity(Listener.get_otherKey());
-				Actor.actions(Listener.get_otherKey());
-				//System.out.println("x coords: " + Actor.x_coord);
-				//System.out.println("shape x: " + Actor.shape.x);
-				//
-				//NPCs actions:
-				ArrayList<Monster> mobs = SDL.map_list[SDL.map_index].mobs_in_map;
-				for (int i = 0; i < mobs.size(); i++) {
-					if (mobs.get(i).charStats.isAlive()) {
-						mobs.get(i).AI_movement();
-						mobs.get(i).AI_gravity();
-					} else {
-						mobs.remove(i);
-					}
-				}
-				reset();
-				update();
-			}//Game loop ends
-
-			System.out.println("GAME OVER, L2P");
-
-			while (Listener.get_otherKey() != KeyCode.ESCAPE) {
-				//Waiting for player to accept defeat/stop crying
-				try {
-					Thread.sleep(game_speed * 10);
-				} catch (InterruptedException e) {};
-			}
-			System.exit(0); // TODO: Change to GameWindow.close() or menu
-		}
 	}
 }
