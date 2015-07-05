@@ -4,14 +4,17 @@
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+
+@SuppressWarnings("restriction")
 public class KeyboardInteraction {}
 
+@SuppressWarnings("restriction")
 class Listener {
 	private static KeyCode moveKey;
 	private static KeyCode otherKey;
 	private static boolean isHolding;
 
-	Listener(){
+	public Listener(){
 		moveKey = null;
 		otherKey = null;
 		isHolding = false;

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Char_stats {
+public class CharStats {
 	private ArrayList<Weapon> weapons;
 	private Weapon current_weapon;
 	private int weapon_index;//weapon slot
@@ -16,27 +16,31 @@ public class Char_stats {
 	private String name;
 	private boolean alive = true;
 
+	private boolean player;
+
 	private void isAliveCheck(){
 		if(health <= 0) alive = false;
 	}
 
-	public boolean getisAlive(){ return alive; }
+	public boolean isPlayer(){ return player; }
+	public boolean isAlive(){ return alive; }
 	public int getHealth(){ return health; }
 	public int getMana(){ return mana; }
-	public int getWeaponRange(){ return current_weapon.get_range(); }
+	public int getWeaponRange(){ return current_weapon.getRange(); }
 	/**'Cooldown' after every attack (measured by frames).*/
-	public int getWeaponCD(){ return current_weapon.get_CD(); }
-	public int[] get_current_weapon_seq(){
+	public int getWeaponCD(){ return current_weapon.getCD(); }
+	public int[] getCurrentWeaponSeq(){
 		return current_weapon.getSequence();
 	}
 
-	public Char_stats(String name, int max_health, int max_mana, int armor, int base_damage) {
+	public CharStats(String name, int max_health, int max_mana, int armor, 
+			int base_damage, boolean is_player) {
 		this.name = name;
 		health = this.max_health = max_health;
 		mana = this.max_mana = max_mana;
 		this.armor = armor;
 		this.attack_damage = base_damage;
-
+		player = is_player;
 		weapons = new ArrayList<Weapon>();
 	}
 
@@ -53,31 +57,37 @@ public class Char_stats {
 	}*/
 
 	/**Percentage based hit, not effected by armor.*/
-	public void falling_damage(int stacked_velocity){
-		if(stacked_velocity > 0)
+	public void fallingDamage(int stacked_velocity){
+		if(stacked_velocity > 0){
 			health -= ((max_health * stacked_velocity) / 100);
+			System.out.println("HP: "+health);
+		}
 		isAliveCheck();
 	}
 
-	public void taking_damage(Char_stats CS){
-		taking_damage(CS.attack_damage);
+	public void takingDamage(CharStats CS){
+		takingDamage(CS.attack_damage);
+		if(player)
+			System.out.println("HP: "+health);
+		else
+			System.out.println("Mob's HP: "+health);
 	}
 
 	/**Take physical damage(effected by armor).*/
-	private void taking_damage(int raw_hit){
+	private void takingDamage(int raw_hit){
 		if(armor <= raw_hit)
 			health = health - (raw_hit - armor);
 		isAliveCheck();
 	}
 
 	/**<b>This CS</b> will deal its damage to the given <b>CS</b>.*/
-	public void deal_damage(Char_stats CS){
+	public void dealDamage(CharStats CS){
 		//System.out.println(CS.attack_damage);
-		CS.taking_damage(this);
+		CS.takingDamage(this);
 	}
 
 	/**Fill an empty weapon slot.*/
-	public void obtain_weapon(Weapon W){
+	public void obtainWeapon(Weapon W){
 		//System.out.println("CHECK");
 		if(!weapons.contains(W) && weapons.size() < 4){//amount of weapons limit
 			weapons.add(W);
@@ -85,17 +95,17 @@ public class Char_stats {
 	}
 
 	/**Throw current weapon and replace with one on the ground.*/
-	public void switch_weapon(Weapon W){
-		attack_damage -= current_weapon.get_dmg();
+	public void switchWeapon(Weapon W){
+		attack_damage -= current_weapon.getDamage();
 
 		current_weapon = W; //current weapon switched
-		attack_damage += current_weapon.get_dmg();
+		attack_damage += current_weapon.getDamage();
 		weapons.set(weapon_index, current_weapon);
 
 	}
 
 	/**Select from obtained weapons. Currently limited to 4 slots*/
-	public void equip_weapon(char key){//'1','2','3','4'
+	public void equipWeapon(char key){//'1','2','3','4'
 		Weapon W = null;
 		switch(key){
 		case '1':
@@ -125,10 +135,10 @@ public class Char_stats {
 		}
 
 		if(current_weapon != null){
-			attack_damage -= current_weapon.get_dmg();
+			attack_damage -= current_weapon.getDamage();
 		}
 		current_weapon = W;
-		attack_damage += current_weapon.get_dmg();
+		attack_damage += current_weapon.getDamage();
 	}
 }
 
@@ -153,11 +163,11 @@ class Weapon{
 		this.sequence = atk_seq;
 	}
 
-	public int get_dmg(){ return dmg_bonus; }
-	public int get_range(){ return range; }
-	public int get_CD(){ return cd; }
-	public int get_da(){ return degree_a; }
-	public int get_db(){ return degree_b; }
+	public int getDamage(){ return dmg_bonus; }
+	public int getRange(){ return range; }
+	public int getCD(){ return cd; }
+	public int getDegreeA(){ return degree_a; }
+	public int getDegreeB(){ return degree_b; }
 	public int[] getSequence(){ return sequence; }
 	public String getName(){ return name; }
 }
@@ -187,17 +197,18 @@ class GameItems{
 	@SuppressWarnings("unchecked")
 	private ArrayList<Equipment>[] all_equipment = new ArrayList[6];
 
-	public Weapon get_w(int weapon_index){
+	public Weapon getWeaponIndex(int weapon_index){
 		return all_weapons.get(weapon_index);
 	}
 
-	/**0: head
+	/**
+	 *     0: head
 	 * <br>1: arms
 	 * <br>2: chest
 	 * <br>3: legs
 	 * <br>4: neck
 	 * <br>5: ring*/
-	public Equipment get_e(int equipment_index, int slot){
+	public Equipment getEquipmentIndex(int equipment_index, int slot){
 		return all_equipment[slot].get(equipment_index);
 	}
 

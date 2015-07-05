@@ -1,5 +1,3 @@
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class SharedDataLists {
@@ -8,7 +6,7 @@ public class SharedDataLists {
 		this.Actor = Actor;
 	}
 
-	public GameItems GI;
+	public GameItems gameItems;
 	
 	/**Each column represents the things to draw on the upcoming frame.
 	 * That column will then be removed and if one of the arrays get
@@ -25,7 +23,7 @@ public class SharedDataLists {
 	public int map_index;//Should be interacting later on with saves/loads
 
 	public SharedDataLists(Settings config, GameItems GI) {
-		this.GI = GI;
+		this.gameItems = GI;
 
 		map_index = 0;
 
@@ -46,25 +44,51 @@ public class SharedDataLists {
 
 		Point p = map_list[map_index].player_starting_coords;
 		Actor.shape = new Rectangle(p.x, p.y, Actor.width, Actor.height);
-		Actor.set_coords(p.x - 300, p.y - 300);
+		Actor.setCoords(p.x - 300, p.y - 300);
 
 		initialize_monsters();
 	}
 
 	/** monster objects to paint and act with */
 	public void initialize_monsters(){
-		Map M = map_list[map_index];
+		Map map = map_list[map_index];
 
-		int mobs_amount = M.monster_coords.size();
-		M.mobs_in_map = new ArrayList<Monster>();
+		int mobs_amount = map.monster_coords.size();
+		map.mobs_in_map = new ArrayList<Monster>();
 
 		for (int i = 0; i < mobs_amount; i++) {
 			//each i stands for a different mob in the current map.
-			M.mobs_in_map.add(new Monster(this, new Char_stats("monsta", 100, 30, 0, 1), i));	
+			map.mobs_in_map.add(new Monster(this,
+					new CharStats("monsta", 100, 30, 0, 1, false), i));	
 		}
 	}
 
 	//can be used as a save point later on
 	/*public ... load_map(...){...}*/
 	/*public ... save_map(...){...}*/
+}
+
+class Rectangle{
+	int x, y, width, height;
+	
+	public Rectangle(int x, int y, int width, int height){
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+}
+
+class Point{
+	int x, y;
+	
+	public Point(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+	
+	public Point(){
+		x = 0;
+		y = 0;
+	}
 }

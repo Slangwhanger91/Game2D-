@@ -11,9 +11,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Created by aperte on 29.06.2015.
+ * Created by monkey on 29.06.2015.
  * Class responsible for displaying a menu for the game.
  */
+@SuppressWarnings("restriction")
 public class GameMenu  {
     Image background;
     Image button_normal_start;
@@ -26,7 +27,8 @@ public class GameMenu  {
     GameWindow master;
     Scene scene;
 
-    public GameMenu(GameWindow master, Stage stage) {
+    
+	public GameMenu(GameWindow master, Stage stage) {
         this.master = master;
         Pane pane = new Pane();
         scene = new Scene(pane, 800, 600);
@@ -101,7 +103,7 @@ public class GameMenu  {
             // of all elements in vbox
             b.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         }
-        buttonBox.setMargin(exitButton, new Insets(1, 0, 0, 0));
+        VBox.setMargin(exitButton, new Insets(1, 0, 0, 0));
         // compensates for 9px separator between two last buttons
 
         buttonBox.getChildren().addAll(startButton, mapsButton, exitButton);

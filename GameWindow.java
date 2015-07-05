@@ -3,11 +3,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.awt.event.KeyListener;
-
+@SuppressWarnings("restriction")
 public class GameWindow extends Application {
     Game2d game_window;
-    private static Listener keyListener = new Listener();
     Group root;
 
     @Override
@@ -41,8 +39,7 @@ public class GameWindow extends Application {
     }
 
     void startGame(Stage stage) {
-        Listener KL = new Listener();
-        Game2d game = new Game2d(KL);
+        Game2d game = new Game2d();
         stage.setScene(game.scene);
         /*
         getContentPane().removeAll();
