@@ -4,6 +4,7 @@ public class CharStats {
 	private ArrayList<Weapon> weapons;
 	private Weapon current_weapon;
 	private int weapon_index;//weapon slot
+	private Buffs buffs;
 
 	private int max_health;
 	private int health;
@@ -22,6 +23,7 @@ public class CharStats {
 		if(health <= 0) alive = false;
 	}
 
+	public boolean isImmune(){ return buffs.isImmune(); }
 	public boolean isPlayer(){ return player; }
 	public boolean isAlive(){ return alive; }
 	public int getHealth(){ return health; }
@@ -42,19 +44,8 @@ public class CharStats {
 		this.attack_damage = base_damage;
 		player = is_player;
 		weapons = new ArrayList<Weapon>();
+		buffs = new Buffs();
 	}
-
-	/*public void lvlUP(){
-		max_health *= 1.1;
-		max_mana *= 1.1;
-		stacked_power_bits_required *= 1.5;
-		armor += 2;
-		++base_damage;
-
-		health = max_health;
-		mana = max_mana;
-		stacked_power_bits = 0;
-	}*/
 
 	/**Percentage based hit, not effected by armor.*/
 	public void fallingDamage(int stacked_velocity){
@@ -66,7 +57,15 @@ public class CharStats {
 	}
 
 	public void takingDamage(CharStats CS){
-		takingDamage(CS.attack_damage);
+		if(player){
+			if(!buffs.isImmune()){
+				takingDamage(CS.attack_damage);
+				buffs.defaultImmunityOnHit();
+			}
+		}else{
+			takingDamage(CS.attack_damage);
+		}
+
 		if(player)
 			System.out.println("HP: "+health);
 		else
@@ -139,6 +138,34 @@ public class CharStats {
 		}
 		current_weapon = W;
 		attack_damage += current_weapon.getDamage();
+	}
+
+	/**Called every frame*/
+	public void buffsTick() {
+		buffs.tick();
+	}
+}
+
+class Buffs{
+
+	/**Called every frame*/
+	public void tick(){
+		immunity--;
+	}
+	
+	private int immunity;
+	//TODO: add poisons, power-ups, health extensions, speed etc..
+
+	public Buffs(){
+		immunity = 0;//amount of frames where you're immune
+	}
+
+	public void defaultImmunityOnHit(){//reset
+		immunity = 30;
+	}
+
+	public boolean isImmune(){
+		return immunity > 0;
 	}
 }
 

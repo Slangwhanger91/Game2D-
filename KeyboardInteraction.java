@@ -12,8 +12,8 @@ class Listener {
 	private static KeyCode moveKey;
 	private static KeyCode otherKey;
 	private static boolean isHolding;
-	static Game2d controller;
-	static HashMap<KeyCode, KeyBindAction> keymap = new HashMap<>();
+	public static Game2d controller;
+	public static HashMap<KeyCode, KeyBindAction> keymap = new HashMap<>();
 
 	public Listener(){
 		moveKey = null;

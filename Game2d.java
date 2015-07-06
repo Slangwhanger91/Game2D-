@@ -19,14 +19,14 @@ public class Game2d {
 	private Player Actor;
 	private SharedDataLists SDL;
 	private Settings config;
-	//private final int game_speed = 30;//fps
-	private final double fps = 60;
+	private final double fps = 30;
+	//private final double fps = 60;
 	private final int WINDOW_WIDTH, WINDOW_HEIGHT;
 
 	public Scene scene;
 	private Group root;
 	private GraphicsContext g;
-	Timeline gameLoop;
+	private Timeline gameLoop;
 
 	/**Create the application and run it.*/
 	public Game2d() {
@@ -54,7 +54,8 @@ public class Game2d {
 		Listener.controller = this;
 
 		// keybindings
-		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.pause());
+		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
+		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
 
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(game_window);
@@ -68,14 +69,18 @@ public class Game2d {
 		gameLoop.play();
 	}
 
+	private void exitGame() {
+         System.exit(0);
+	}
+	
 	private void pause() {
-		Listener.keymap.put(KeyCode.ESCAPE,
+		Listener.keymap.put(KeyCode.P,
 				() -> Listener.controller.unpause());
 		gameLoop.pause();
 	}
 
 	private void unpause() {
-		Listener.keymap.put(KeyCode.ESCAPE,
+		Listener.keymap.put(KeyCode.P,
 				() -> Listener.controller.pause());
 		gameLoop.play();
 	}
@@ -86,8 +91,9 @@ public class Game2d {
 		g.fillRect(0, 0, game_window.getWidth(), game_window.getHeight());
 	}
 
-	final int portal_resize = 5;
-	void update() {
+	private final int portal_resize = 5;
+	
+	private void update() {
 		for(PaintRectNode PRN : SDL.map_list[SDL.map_index].toPaint){
 			switch(PRN.type){
 			case 'G':
@@ -115,7 +121,8 @@ public class Game2d {
 		}
 		//
 		//painting main character
-		g.setFill(Color.BLACK);
+		if(Actor.charStats.isImmune()) g.setFill(Color.RED);
+		else g.setFill(Color.BLACK);
 		g.fillRect(Actor.shape.x - Actor.xCoord(),
 				Actor.shape.y - Actor.yCoord(), Actor.width, Actor.height);
 		//
@@ -148,6 +155,7 @@ public class Game2d {
 		Actor.movement(Listener.get_moveKey());
 		Actor.gravity(Listener.get_otherKey());
 		Actor.actions(Listener.get_otherKey());
+		Actor.buffDurations();
 		//System.out.println("x coords: " + Actor.x_coord);
 		//System.out.println("shape x: " + Actor.shape.x);
 		//

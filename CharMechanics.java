@@ -357,6 +357,10 @@ class Player extends NPC{
 		//System.out.println("health: " + CharStats.getHealth()); //SHOW HEALTH
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
 	}
+	
+	public void buffDurations() {
+		charStats.buffsTick();
+	}
 
 	private void someNextLevelCheckWow(){	
 		MapNode[][] MN = sharedDataLists.map_list[sharedDataLists.map_index].map;//fucking code size
@@ -368,7 +372,6 @@ class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			sharedDataLists.new_level();
 	}
-
 
 
 }

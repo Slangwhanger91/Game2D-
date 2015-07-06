@@ -11,21 +11,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Created by monkey on 29.06.2015.
+ * Created by crab people on 29.06.2015.
  * Class responsible for displaying a menu for the game.
  */
 @SuppressWarnings("restriction")
 public class GameMenu  {
-    Image background;
-    Image button_normal_start;
-    Image button_normal_maps;
-    Image button_normal_exit;
-    Image button_hover_start;
-    Image button_hover_maps;
-    Image button_hover_exit;
+    private Image background;
+    private Image button_normal_start;
+    private Image button_normal_maps;
+    private Image button_normal_exit;
+    private Image button_hover_start;
+    private Image button_hover_maps;
+    private Image button_hover_exit;
 
-    GameWindow master;
-    Scene scene;
+    private GameWindow master;
+    public Scene scene;
 
     
 	public GameMenu(GameWindow master, Stage stage) {
