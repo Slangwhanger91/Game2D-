@@ -112,7 +112,7 @@ public class Game2d {
 			}
 		}
 		//
-		//painting characters/creatures
+		//painting characters/creatures(not actor)
 		g.setFill(Color.MAGENTA);//why's purple called "magneta", who knows..
 		for(Monster MOB : SDL.map_list[SDL.map_index].mobs_in_map){
 			Rectangle R = MOB.shape;

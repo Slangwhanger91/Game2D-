@@ -61,15 +61,12 @@ public class CharStats {
 			if(!buffs.isImmune()){
 				takingDamage(CS.attack_damage);
 				buffs.defaultImmunityOnHit();
+				System.out.println("HP: "+health);
 			}
 		}else{
 			takingDamage(CS.attack_damage);
-		}
-
-		if(player)
-			System.out.println("HP: "+health);
-		else
 			System.out.println("Mob's HP: "+health);
+		}	
 	}
 
 	/**Take physical damage(effected by armor).*/
