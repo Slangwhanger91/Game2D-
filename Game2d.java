@@ -28,8 +28,12 @@ public class Game2d {
 	private GraphicsContext g;
 	private Timeline gameLoop;
 
+	SoundController soundController;
+
 	/**Create the application and run it.*/
-	public Game2d() {
+	public Game2d(SoundController soundController) {
+		this.soundController = soundController;
+
 		config = new Settings("config.properties");
 		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
 		exists "800" is taken as default instead.*/
@@ -43,6 +47,7 @@ public class Game2d {
 		root = new Group();
 		scene = new Scene(root);
 
+
 		final Duration frameDuration = Duration.millis(1000/fps);
 		final KeyFrame keyFrame = new KeyFrame(frameDuration,
 				event -> tick());
@@ -55,6 +60,8 @@ public class Game2d {
 
 		// keybindings
 		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
+		// TODO: Fix so muting works in GameWindow/GameMenu not only in Game2d..
+		Listener.keymap.put(KeyCode.O, () -> Listener.controller.muteSound());
 		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
 
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -67,6 +74,10 @@ public class Game2d {
 		g = game_window.getGraphicsContext2D();
 
 		gameLoop.play();
+	}
+
+	private void muteSound() {
+		soundController.mutePlaying();
 	}
 
 	private void exitGame() {

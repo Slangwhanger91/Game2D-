@@ -28,7 +28,7 @@ public class GameMenu  {
     public Scene scene;
 
     
-	public GameMenu(GameWindow master, Stage stage) {
+	public GameMenu(GameWindow master, Stage stage, SoundController soundController) {
         this.master = master;
         Pane pane = new Pane();
         scene = new Scene(pane, 800, 600);
@@ -104,5 +104,6 @@ public class GameMenu  {
         // compensates for 9px separator between two last buttons
 
         buttonBox.getChildren().addAll(startButton, mapsButton, exitButton);
+        soundController.playSound("bgm");
     }
 }
