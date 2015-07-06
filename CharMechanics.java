@@ -184,6 +184,8 @@ abstract class NPC{
 
 @SuppressWarnings("restriction")
 class Player extends NPC{
+	SoundController soundController;
+
 	private int y_coord;//camera related
 	private int x_coord;//camera related
 
@@ -212,10 +214,11 @@ class Player extends NPC{
 		stacked_velocity = -44;
 	}
 
-	Player(SharedDataLists SDL, CharStats CS){
+	Player(SharedDataLists SDL, CharStats CS, SoundController soundController){
 		init();
 		charStats = CS;
 		sharedDataLists = SDL;
+		this.soundController = soundController;
 
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(0));
 		charStats.equipWeapon('1');
@@ -276,6 +279,7 @@ class Player extends NPC{
 		else if(key == KeyCode.CONTROL){ //ctrl (both sides)
 			sharedDataLists.add_sequence(charStats.getCurrentWeaponSeq());
 			attack_delay = charStats.getWeaponCD();
+			soundController.playSound("beep");
 			attack();
 		}
 

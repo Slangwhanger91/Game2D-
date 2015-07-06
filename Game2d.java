@@ -41,7 +41,7 @@ public class Game2d {
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 		SDL = new SharedDataLists(config, new GameItems());
 		SDL.initialize_monsters();
-		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
+		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true), soundController);
 		SDL.set_actor_once(Actor);
 
 		root = new Group();

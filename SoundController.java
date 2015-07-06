@@ -9,23 +9,29 @@ import java.util.HashMap;
  * Created by aperte on 06.07.2015.
  */
 public class SoundController {
+    // TODO: Add sfxvolume, bgvolume, voicevolume
     double volume;
+    // TODO: Need better volume structure (messy down there)
     boolean muted;
     HashMap<String, PlayableSound> soundMap = new HashMap<>();
     ArrayList<SoundPlayer> playing = new ArrayList<>();
 
     SoundController() {
-        volume = 0.1;
+        // TODO: Get volume from config?
+        volume = 0.05;
+        // TODO: Get sounds from config?
         newSound("bgm", "Cold_Silence.mp3");
-        newSoundEffect("beep", "bgm_menu.wav");
+        newSoundEffect("beep", "beep.wav");
     }
 
     void newSoundEffect(String id, String uri) {
-        putSound(id, new SoundEffect(getClass().getResource(uri).toExternalForm(), volume));
+        // TODO: Error handling
+        putSound(id, new SoundEffect(getClass().getResource(uri).toExternalForm(), volume, this));
     }
 
     void newSound(String id, String uri) {
-        putSound(id, new SoundPlayer(getClass().getResource(uri).toExternalForm(), volume));
+        // TODO: Error handling
+        putSound(id, new SoundPlayer(getClass().getResource(uri).toExternalForm(), volume, this));
     }
 
     PlayableSound getSound(String id) {
@@ -69,43 +75,51 @@ public class SoundController {
 class SoundEffect extends PlayableSound {
     AudioClip clip;
 
-    SoundEffect(String uri, double volume) {
-        super(volume);
+    SoundEffect(String uri, double volume, SoundController master) {
+        super(master);
         this.clip = new AudioClip(uri);
     }
 
-    @Override
-    public void run() {
-        clip.play();
+    void play() {
+        if (master.muted) return;
+        clip.setVolume(master.volume);
+        new Thread(() -> clip.play()).start();
     }
+
 }
 
 /* Class for playing Media sound, ment for longer sounds with control possible. */
 class SoundPlayer extends PlayableSound {
     Media media;
     MediaPlayer mediaPlayer;
+    Thread th;
 
-    SoundPlayer(String uri, double volume) {
-        super(volume);
+    SoundPlayer(String uri, double volume, SoundController master) {
+        super(master);
+        this.volume = volume;
         this.media = new Media(uri);
     }
 
-    @Override
-    public void run() {
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setVolume(volume);
-        mediaPlayer.setOnReady(() -> mediaPlayer.play());
+    void play() {
+        th = new Thread(new Runnable() {
+            public void run() {
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setVolume(volume);
+                mediaPlayer.setOnReady(() -> mediaPlayer.play());
+            }
+        });
+        th.start();
     }
 }
 
 /* Abstract class for gathering the playable sounds under one polymorphism */
-abstract class PlayableSound extends Thread {
-    double volume;
-    void play() {
-        this.start();
-    }
+abstract class PlayableSound {
+    SoundController master;
+    double volume; // implementation choose themselves how to handle volume
 
-    PlayableSound(double volume) {
-        this.volume = volume;
+    abstract void play();
+
+    PlayableSound(SoundController master) {
+        this.master = master;
     }
 }
