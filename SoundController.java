@@ -13,15 +13,22 @@ public class SoundController {
     double volume;
     // TODO: Need better volume structure (messy down there)
     boolean muted;
+    boolean enabled;
     HashMap<String, PlayableSound> soundMap = new HashMap<>();
     ArrayList<SoundPlayer> playing = new ArrayList<>();
 
     SoundController() {
-        // TODO: Get volume from config?
-        volume = 0.05;
-        // TODO: Get sounds from config?
-        newSound("bgm", "Cold_Silence.mp3");
-        newSoundEffect("beep", "beep.wav");
+        Settings config = new Settings("config.properties");
+        enabled = Boolean.parseBoolean(config.get("sound_enabled", "true"));
+        if (enabled) {
+            // TODO: Get volume from config?
+            volume = 0.05;
+            // TODO: Get sounds from config?
+            newSound("bgm", "Cold_Silence.mp3");
+            newSoundEffect("beep", "beep.wav");
+        } else {
+            return;
+        }
     }
 
     void newSoundEffect(String id, String uri) {
@@ -45,10 +52,12 @@ public class SoundController {
     }
 
     void playSound(String id) {
-        PlayableSound sound = getSound(id);
-        sound.play();
-        if (sound instanceof SoundPlayer) {
-            playing.add((SoundPlayer)sound);
+        if (enabled) {
+            PlayableSound sound = getSound(id);
+            sound.play();
+            if (sound instanceof SoundPlayer) {
+                playing.add((SoundPlayer) sound);
+            }
         }
     }
 
