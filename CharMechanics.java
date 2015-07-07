@@ -1,9 +1,9 @@
 //import javafx.scene.input.KeyCode;
 
-import javafx.scene.input.KeyCode;
-
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javafx.scene.input.KeyCode;
 
 
 @SuppressWarnings("restriction")
@@ -136,7 +136,7 @@ abstract class NPC{
 		}
 		return false;	
 	}
-	
+
 	protected boolean gravityMethod(KeyCode key){
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
@@ -145,7 +145,7 @@ abstract class NPC{
 			stacked_velocity = -44;
 			jumped = true;
 		}
-		
+
 		boolean flying_or_jumped = false;
 		if(isFlying() || jumped){
 			flying_or_jumped = true;
@@ -177,7 +177,7 @@ abstract class NPC{
 				}
 			}
 		}
-	
+
 		return flying_or_jumped;
 	}
 }
@@ -218,6 +218,7 @@ class Player extends NPC{
 		sharedDataLists = SDL;
 
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(0));
+		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(1));
 		charStats.equipWeapon('1');
 
 		Point p = sharedDataLists.map_list[sharedDataLists.map_index].player_starting_coords;
@@ -239,51 +240,82 @@ class Player extends NPC{
 		return false;
 	}
 
-	private void attackRight(Monster M, boolean within_y){
+	private void stabRight(Monster M){
 		if(M.shape.x + M.shape.width > this.shape.x + this.shape.width //checking weapon base
 				&& M.shape.x <= //checking weapon edge
-				this.shape.x + this.shape.width + this.charStats.getWeaponRange()
-				&& within_y){
+				this.shape.x + this.shape.width + this.charStats.getWeapon().getRange()){
 			this.charStats.dealDamage(M.charStats);
 			//System.out.println("HIT (right)");
 		}
 	}
 
-	private void attackLeft(Monster M, boolean within_y){
+	private void stabLeft(Monster M){
 		if(M.shape.x < this.shape.x //checking weapon base
 				&& M.shape.x + M.shape.width >= //checking weapon edge
-				this.shape.x - this.charStats.getWeaponRange()
-				&& within_y){
+				this.shape.x - this.charStats.getWeapon().getRange()){
 			this.charStats.dealDamage(M.charStats);
 			//System.out.println("HIT (left)");
 		}
 	}
 
 	private void attack(){
-		for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
-			int weapon_y_axis = this.shape.y + this.height/2;
-			boolean within_y = (M.shape.y <= weapon_y_axis) 
-					&& (M.shape.y + M.shape.height >= weapon_y_axis);
-			if(facing == 'd') 
-				attackRight(M, within_y);
-			else 
-				attackLeft(M, within_y);
+		float degree_a = charStats.getWeapon().getDegreeA();
+		float degree_b = charStats.getWeapon().getDegreeB();
+
+		if(degree_a - degree_b == 0){//stab
+			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
+				int weapon_y_axis = this.shape.y + this.height/2;
+				boolean within_y = (M.shape.y <= weapon_y_axis) 
+						&& (M.shape.y + M.shape.height >= weapon_y_axis);
+				if(within_y){
+					if(facing == 'd')
+						stabRight(M);
+					else 
+						stabLeft(M);
+				}
+			}
+		}else{//slash
+			Triangle triangular_area;
+			Weapon W = charStats.getWeapon();
+			int actor_x, actor_y = shape.y + shape.height/2;
+
+			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
+				if(facing == 'd'){//right
+					actor_x = shape.x + shape.width;
+
+					triangular_area = W.setTriangle(actor_x, actor_y, 
+							actor_x + W.getRange(), actor_y - (int)(W.getRange() * W.getDegreeA()), 
+							actor_x + W.getRange(), actor_y - (int)(W.getRange() * W.getDegreeB()));
+				}else{//left
+					actor_x = shape.x;
+					triangular_area = W.setTriangle(actor_x, actor_y, 
+							actor_x - W.getRange(), actor_y - (int)(W.getRange() * W.getDegreeA()), 
+							actor_x - W.getRange(), actor_y - (int)(W.getRange() * W.getDegreeB()));
+				}
+				//===================================================================================
+				if(M.shape.isIntersectingTriangle(triangular_area)){
+					charStats.dealDamage(M.charStats);
+
+					/*System.out.println("actor_y "+actor_y+
+							", top_reach "+ (-(int)(W.getRange() * W.getDegreeA()))+ 
+							", bottom_reach "+ (-(int)(W.getRange() * W.getDegreeB())));
+					System.out.println("mob_y top "+M.shape.y+"mob_y bottom "+(M.shape.y + M.shape.height));*/
+					//System.out.println("HIT");
+				}
+			}
 		}
 	}
 
 	public void actions(KeyCode key){
 		if(attack_delay > 0) attack_delay--;
 		else if(key == KeyCode.CONTROL){ //ctrl (both sides)
-			sharedDataLists.add_sequence(charStats.getCurrentWeaponSeq());
-			attack_delay = charStats.getWeaponCD();
-			attack();
+			sharedDataLists.add_sequence(charStats.getWeapon().getSequence());
+			attack_delay = charStats.getWeapon().getCD();
+			attack();//activate attack animation and logic
 		}
 
-		if(attack_delay == charStats.getWeaponCD() -3)
+		if(attack_delay == charStats.getWeapon().getCD() -3)
 			attack(); //consistency with animation
-		/*if(key == 16){//shift
-			System.out.println(SDL.map_list[SDL.map_index].mobs_in_map.size());
-		}*/
 	}
 
 
@@ -357,7 +389,7 @@ class Player extends NPC{
 		//System.out.println("health: " + CharStats.getHealth()); //SHOW HEALTH
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
 	}
-	
+
 	public void buffDurations() {
 		charStats.buffsTick();
 	}
@@ -372,7 +404,6 @@ class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			sharedDataLists.new_level();
 	}
-
 
 }
 

@@ -7,7 +7,7 @@ public class SharedDataLists {
 	}
 
 	public GameItems gameItems;
-	
+
 	/**Each column represents the things to draw on the upcoming frame.
 	 * That column will then be removed and if one of the arrays get
 	 * empty, it's then removed.*/
@@ -68,27 +68,4 @@ public class SharedDataLists {
 	/*public ... save_map(...){...}*/
 }
 
-class Rectangle{
-	int x, y, width, height;
-	
-	public Rectangle(int x, int y, int width, int height){
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-	}
-}
 
-class Point{
-	int x, y;
-	
-	public Point(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
-	
-	public Point(){
-		x = 0;
-		y = 0;
-	}
-}

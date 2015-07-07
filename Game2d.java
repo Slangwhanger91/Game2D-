@@ -56,7 +56,11 @@ public class Game2d {
 		// keybindings
 		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
 		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
-
+		Listener.keymap.put(KeyCode.DIGIT1, () -> Listener.controller.Actor.charStats.equipWeapon('1'));
+		Listener.keymap.put(KeyCode.DIGIT2, () -> Listener.controller.Actor.charStats.equipWeapon('2'));
+		Listener.keymap.put(KeyCode.DIGIT3, () -> Listener.controller.Actor.charStats.equipWeapon('3'));
+		Listener.keymap.put(KeyCode.DIGIT4, () -> Listener.controller.Actor.charStats.equipWeapon('4'));
+		
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(game_window);
 		scene.addEventHandler(KeyEvent.KEY_PRESSED,
@@ -68,11 +72,11 @@ public class Game2d {
 
 		gameLoop.play();
 	}
-
-	private void exitGame() {
-         System.exit(0);
-	}
 	
+	private void exitGame() {
+		System.exit(0);
+	}
+
 	private void pause() {
 		Listener.keymap.put(KeyCode.P,
 				() -> Listener.controller.unpause());
@@ -92,7 +96,7 @@ public class Game2d {
 	}
 
 	private final int portal_resize = 5;
-	
+
 	private void update() {
 		for(PaintRectNode PRN : SDL.map_list[SDL.map_index].toPaint){
 			switch(PRN.type){
@@ -128,16 +132,18 @@ public class Game2d {
 		//
 		//weapon related animations:
 		g.setFill(Color.BLUE);
+		if(Actor.charStats.getWeapon().getDegreeA() != 0)
+			g.setFill(Color.YELLOW);//testing weapon switch
 		ArrayList<Integer> seq;
 		for (int i = 0; i < SDL.image_sequences.size(); i++) {
 			seq = SDL.image_sequences.get(i);
-
-			if(Actor.getFacing() == 'd'){
+			
+			if(Actor.getFacing() == 'd'){//right
 				g.fillRect(Actor.shape.x - Actor.xCoord() + Actor.width,
 						Actor.shape.y - Actor.yCoord() + Actor.height/2,
 						seq.remove(0), 2);
-			}
-			else{
+
+			}else{//left
 				int img = seq.remove(0);
 				g.fillRect(Actor.shape.x - Actor.xCoord() - img,
 						Actor.shape.y - Actor.yCoord() + Actor.height/2,

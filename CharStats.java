@@ -28,12 +28,7 @@ public class CharStats {
 	public boolean isAlive(){ return alive; }
 	public int getHealth(){ return health; }
 	public int getMana(){ return mana; }
-	public int getWeaponRange(){ return current_weapon.getRange(); }
-	/**'Cooldown' after every attack (measured by frames).*/
-	public int getWeaponCD(){ return current_weapon.getCD(); }
-	public int[] getCurrentWeaponSeq(){
-		return current_weapon.getSequence();
-	}
+	public Weapon getWeapon(){ return current_weapon; }
 
 	public CharStats(String name, int max_health, int max_mana, int armor, 
 			int base_damage, boolean is_player) {
@@ -99,7 +94,7 @@ public class CharStats {
 		weapons.set(weapon_index, current_weapon);
 
 	}
-
+	
 	/**Select from obtained weapons. Currently limited to 4 slots*/
 	public void equipWeapon(char key){//'1','2','3','4'
 		Weapon W = null;
@@ -135,6 +130,8 @@ public class CharStats {
 		}
 		current_weapon = W;
 		attack_damage += current_weapon.getDamage();
+		
+		System.out.println("You're now equipping " + current_weapon.getName());
 	}
 
 	/**Called every frame*/
@@ -172,12 +169,13 @@ class Weapon{
 	private int dmg_bonus;
 	private int range;
 	private int cd;//cooldown
-	private int degree_a, degree_b;//from - to: f.e 1 to 90 would be a slash from
+	private float degree_a, degree_b;//from - to: f.e 1 to 90 would be a slash from
 	//above the player into a straight line where the player is facing.
 	private int[] sequence;
-
+	private Triangle slashing_triangle;
+	
 	public Weapon(String name, int dmg_bonus, int range, int cd,
-			int degree_a, int degree_b, int[] atk_seq){
+			float degree_a, float degree_b, int[] atk_seq){
 		this.name = name;
 		this.dmg_bonus = dmg_bonus;
 		this.range = range;
@@ -185,13 +183,28 @@ class Weapon{
 		this.degree_a = degree_a;
 		this.degree_b = degree_b;
 		this.sequence = atk_seq;
+		slashing_triangle = new Triangle();
+	}
+	
+	public Triangle setTriangle(int x1, int y1, int x2, int y2, 
+			int x3, int y3){
+		slashing_triangle.a.x = x1;
+		slashing_triangle.a.y = y1;
+		
+		slashing_triangle.b.x = x2;
+		slashing_triangle.b.y = y2;
+		
+		slashing_triangle.c.x = x3;
+		slashing_triangle.c.y = y3;
+		
+		return slashing_triangle;
 	}
 
 	public int getDamage(){ return dmg_bonus; }
 	public int getRange(){ return range; }
 	public int getCD(){ return cd; }
-	public int getDegreeA(){ return degree_a; }
-	public int getDegreeB(){ return degree_b; }
+	public float getDegreeA(){ return degree_a; }
+	public float getDegreeB(){ return degree_b; }
 	public int[] getSequence(){ return sequence; }
 	public String getName(){ return name; }
 }
@@ -216,7 +229,7 @@ class Equipment{
 /**creates all the items in the game*/
 class GameItems{
 
-	private ArrayList<Weapon> all_weapons = new ArrayList<Weapon>();;
+	private ArrayList<Weapon> all_weapons = new ArrayList<Weapon>();
 	//equipment
 	@SuppressWarnings("unchecked")
 	private ArrayList<Equipment>[] all_equipment = new ArrayList[6];
@@ -242,8 +255,10 @@ class GameItems{
 		}
 		//=================================================================
 		//add weapons:
-		all_weapons.add(new Weapon("Slayer of Nothing", 200, 50, 10, 90, 90, 
+		all_weapons.add(new Weapon("Slayer of Nothing", 200, 50, 10, 0f, 0f, 
 				new int[]{15, 35, 50, 45, 25}));
+		all_weapons.add(new Weapon("Illuminati Slasher", 200, 50, 10, 0.5f, -0.5f, 
+				new int[]{50, 50, 50, 50, 50}));//sequence needs to be animated with images
 		//System.out.println("w1: "+all_weapons.get(0));
 		//=================================================================
 		//add equipment:
