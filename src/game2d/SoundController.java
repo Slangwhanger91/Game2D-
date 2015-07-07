@@ -13,17 +13,18 @@ import java.util.HashMap;
 /**
  * Created by aperte on 06.07.2015.
  */
-public class SoundController {
+public final class SoundController {
     // TODO: Add sfxvolume, bgvolume, voicevolume
-    double volume;
+    static double volume;
     // TODO: Need better volume structure (messy down there)
-    boolean muted;
-    boolean enabled;
-    final String SFX_PATH = "sfx/%s";
-    HashMap<String, PlayableSound> soundMap = new HashMap<>();
-    ArrayList<SoundPlayer> playing = new ArrayList<>();
+    static boolean muted;
+    static boolean enabled;
+    static double volumeIncrementValue = 0.05;
+    static final String SFX_PATH = "sfx/%s";
+    static HashMap<String, PlayableSound> soundMap = new HashMap<>();
+    static ArrayList<SoundPlayer> playing = new ArrayList<>();
 
-    public SoundController() {
+    static void init() {
         Settings config = new Settings("config.properties");
         enabled = Boolean.parseBoolean(config.get("sound_enabled", "true"));
         if (enabled) {
@@ -33,7 +34,8 @@ public class SoundController {
             try {
                 newSound("bgm", "Cold_Silence.mp3");
                 newSoundEffect("beep", "beep.wav");
-            } catch (IOException ioe) {
+            } catch (Exception e) {
+                // TODO: Fix error handling ..
                 System.out.println("Error when reading sound files: turned off sound.");
                 enabled = false;
                 return;
@@ -41,34 +43,35 @@ public class SoundController {
         } else {
             return;
         }
+        System.out.println("Sound initiated and enabled!"); // TODO: Change to LOGMSG.
     }
 
-    void newSoundEffect(String id, String uri) throws IOException {
+    static void newSoundEffect(String id, String uri) throws IOException {
         // TODO: Error handling
-        putSound(id, new SoundEffect(getStringURI(String.format(SFX_PATH, uri)), volume, this));
+        putSound(id, new SoundEffect(getStringURI(String.format(SFX_PATH, uri))));
     }
 
-    void newSound(String id, String uri) throws IOException {
+    static void newSound(String id, String uri) throws IOException {
         // TODO: Error handling
-        putSound(id, new SoundPlayer(getStringURI(String.format(SFX_PATH, uri)), volume, this));
+        putSound(id, new SoundPlayer(getStringURI(String.format(SFX_PATH, uri))));
     }
 
-    String getStringURI(String uri) throws IOException {
+    static String getStringURI(String uri) throws IOException {
         File tmp = new File(uri);
         return tmp.toURI().toString();
     }
 
-    PlayableSound getSound(String id) {
+    static PlayableSound getSound(String id) {
         // TODO: Error handling
         return soundMap.get(id);
     }
 
-    PlayableSound putSound(String id, PlayableSound sound) {
+    static PlayableSound putSound(String id, PlayableSound sound) {
         // TODO: Error handling
         return soundMap.put(id, sound);
     }
 
-    public void playSound(String id) {
+    static public void playSound(String id) {
         if (enabled) {
             PlayableSound sound = getSound(id);
             sound.play();
@@ -78,7 +81,7 @@ public class SoundController {
         }
     }
 
-    public void mutePlaying() {
+    static public void mutePlaying() {
         if (muted) {
             for (SoundPlayer sp: playing) {
                 sp.mediaPlayer.setVolume(volume);
@@ -92,8 +95,24 @@ public class SoundController {
         }
     }
 
-    public void setVolume(Double volume) {
-        this.volume = volume;
+    static public void setVolume(Double vol) {
+        volume = vol;
+        for (SoundPlayer sp: playing) {
+            sp.mediaPlayer.setVolume(vol);
+            muted = false; // automatically unmute if incremented/decremented
+        }
+    }
+
+    static public void incrementVolume() {
+        if (volume < 1.0) {
+            setVolume(volume + volumeIncrementValue);
+        }
+    }
+
+    static public void decrementVolume() {
+        if (volume > 0.0) {
+            setVolume(volume - volumeIncrementValue);
+        }
     }
 }
 
@@ -101,15 +120,14 @@ public class SoundController {
 class SoundEffect extends PlayableSound {
     AudioClip clip;
 
-    SoundEffect(String uri, double volume, SoundController master) {
-        super(master);
+    SoundEffect(String uri) {
         this.clip = new AudioClip(uri);
     }
 
     void play() {
         // TODO: Add a short cooldown so we don't play several soundeffects too fast(?)
-        if (master.muted) return;
-        clip.setVolume(master.volume);
+        if (SoundController.muted) return;
+        clip.setVolume(SoundController.volume);
         new Thread(() -> clip.play()).start();
     }
 
@@ -121,16 +139,14 @@ class SoundPlayer extends PlayableSound {
     MediaPlayer mediaPlayer;
     Thread th;
 
-    SoundPlayer(String uri, double volume, SoundController master) throws MediaException {
-        super(master);
-        this.volume = volume;
+    SoundPlayer(String uri) throws MediaException {
         this.media = new Media(uri);
     }
 
     void play() {
         th = new Thread(() -> {
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setVolume(volume);
+            mediaPlayer.setVolume(SoundController.volume);
             mediaPlayer.setOnReady(() -> mediaPlayer.play());
         });
         th.start();
@@ -139,12 +155,5 @@ class SoundPlayer extends PlayableSound {
 
 /* Abstract class for gathering the playable sounds under one polymorphism */
 abstract class PlayableSound {
-    SoundController master;
-    double volume; // implementation choose themselves how to handle volume
-
     abstract void play();
-
-    PlayableSound(SoundController master) {
-        this.master = master;
-    }
 }

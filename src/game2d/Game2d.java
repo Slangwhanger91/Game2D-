@@ -36,11 +36,8 @@ public class Game2d {
 	private GraphicsContext g;
 	private Timeline gameLoop;
 
-	SoundController soundController;
-
 	/**Create the application and run it.*/
-	public Game2d(SoundController soundController) {
-		this.soundController = soundController;
+	public Game2d() {
 
 		config = new Settings("config.properties");
 		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
@@ -49,7 +46,7 @@ public class Game2d {
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 		SDL = new SharedDataLists(config, new GameItems());
 		SDL.initialize_monsters();
-		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true), soundController);
+		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
 		SDL.set_actor_once(Actor);
 
 		root = new Group();
@@ -74,7 +71,9 @@ public class Game2d {
 		Listener.keymap.put(KeyCode.DIGIT2, () -> Listener.controller.Actor.charStats.equipWeapon('2'));
 		Listener.keymap.put(KeyCode.DIGIT3, () -> Listener.controller.Actor.charStats.equipWeapon('3'));
 		Listener.keymap.put(KeyCode.DIGIT4, () -> Listener.controller.Actor.charStats.equipWeapon('4'));
-		
+		Listener.keymap.put(KeyCode.PLUS, () -> SoundController.incrementVolume());
+		Listener.keymap.put(KeyCode.MINUS, () -> SoundController.decrementVolume());
+
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(game_window);
 		scene.addEventHandler(KeyEvent.KEY_PRESSED,
@@ -88,7 +87,7 @@ public class Game2d {
 	}
 
 	private void muteSound() {
-		soundController.mutePlaying();
+		SoundController.mutePlaying();
 	}
 
 	private void exitGame() {

@@ -5,18 +5,18 @@ import javafx.stage.Stage;
 
 @SuppressWarnings("restriction")
 public class GameWindow extends Application {
-    SoundController soundController;
 
     @Override
     public void start(Stage stage) {
         Settings config;
-        soundController = new SoundController();
 
         config = new Settings("config.properties");
         int show_menu = Integer.parseInt(config.get("show_menu", "1"));
 
+        SoundController.init();
+
         if (show_menu > 0) {
-            GameMenu menu = new GameMenu(this, stage, soundController);
+            GameMenu menu = new GameMenu(this, stage);
             stage.setScene(menu.scene);
         } else {
             startGame(stage);
@@ -27,7 +27,7 @@ public class GameWindow extends Application {
     }
 
     public void startGame(Stage stage) {
-        Game2d game = new Game2d(soundController);
+        Game2d game = new Game2d();
         stage.setScene(game.scene);
     }
 

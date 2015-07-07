@@ -1,8 +1,8 @@
 package game2d.charmechanics;
 
 import game2d.MapNode;
-import game2d.SoundController;
 import game2d.SharedDataLists;
+import game2d.SoundController;
 import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
 import game2d.shapes.Triangle;
@@ -10,7 +10,6 @@ import javafx.scene.input.KeyCode;
 
 @SuppressWarnings("restriction")
 public class Player extends NPC{
-	SoundController soundController;
 
 	private int y_coord;//camera related
 	private int x_coord;//camera related
@@ -40,11 +39,10 @@ public class Player extends NPC{
 		stacked_velocity = -44;
 	}
 
-	public Player(SharedDataLists SDL, CharStats CS, SoundController soundController){
+	public Player(SharedDataLists SDL, CharStats CS) {
 		init();
 		charStats = CS;
 		sharedDataLists = SDL;
-		this.soundController = soundController;
 
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(0));
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(1));
@@ -88,7 +86,7 @@ public class Player extends NPC{
 	private void attack(){
 		float degree_a = charStats.getWeapon().getDegreeA();
 		float degree_b = charStats.getWeapon().getDegreeB();
-		soundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want spesific sounds per attack (we do)
+		SoundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want spesific sounds per attack (we do)
 
 		if(degree_a - degree_b == 0){//stab
 			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {

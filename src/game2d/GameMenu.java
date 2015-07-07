@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import game2d.SoundController;
+
 /**
  * Created by crab people and others on 29.06.2015.
  * Class responsible for displaying a menu for the game.
@@ -30,7 +32,7 @@ public class GameMenu  {
     public Scene scene;
 
     
-	public GameMenu(GameWindow master, Stage stage, SoundController soundController) {
+	public GameMenu(GameWindow master, Stage stage) {
         this.master = master;
         Pane pane = new Pane();
         scene = new Scene(pane, 800, 600);
@@ -102,7 +104,7 @@ public class GameMenu  {
         // compensates for 9px separator between two last buttons
 
         buttonBox.getChildren().addAll(startButton, mapsButton, exitButton);
-        soundController.playSound("bgm");
+        SoundController.playSound("bgm");
     }
 
     Image getImage(String id) throws IOException {
