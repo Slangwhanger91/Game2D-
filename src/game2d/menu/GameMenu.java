@@ -1,3 +1,8 @@
+package game2d.menu;
+
+import game2d.core.GameWindow;
+import game2d.sound.SoundController;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Created by crab people on 29.06.2015.
+ * Created by crab people and others on 29.06.2015.
  * Class responsible for displaying a menu for the game.
  */
 @SuppressWarnings("restriction")
@@ -39,21 +44,17 @@ public class GameMenu  {
 
         // TODO: Read image data from config?
         // OR: Use CSS, if possible?
+
         try {
-            background = new Image(new FileInputStream("gfx/menu_draft.bmp"));
-            button_normal_start = new Image(new FileInputStream("gfx/button_normal_start.bmp"));
-            button_normal_maps = new Image(new FileInputStream("gfx/button_normal_maps.bmp"));
-            button_normal_exit = new Image(new FileInputStream("gfx/button_normal_exit.bmp"));
-
-            button_hover_start = new Image(new FileInputStream("gfx/button_hover_start.bmp"));
-            button_hover_maps = new Image(new FileInputStream("gfx/button_hover_maps.bmp"));
-            button_hover_exit = new Image(new FileInputStream("gfx/button_hover_exit.bmp"));
-
-        }
-        catch (IOException ioe) {
-            System.out.println("Failed to read menu files. Skipping menu.");
-            master.startGame(stage);
-            return;
+            background = getImage("gfx/menu_draft.bmp");
+            button_normal_start = getImage("gfx/button_normal_start.bmp");
+            button_hover_start = getImage("gfx/button_hover_start.bmp");
+            button_normal_maps = getImage("gfx/button_normal_maps.bmp");
+            button_hover_maps = getImage("gfx/button_hover_maps.bmp");
+            button_normal_exit = getImage("gfx/button_normal_exit.bmp");
+            button_hover_exit = getImage("gfx/button_hover_exit.bmp");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
 
         BackgroundImage backgroundImage = new BackgroundImage(
@@ -105,5 +106,9 @@ public class GameMenu  {
 
         buttonBox.getChildren().addAll(startButton, mapsButton, exitButton);
         soundController.playSound("bgm");
+    }
+
+    Image getImage(String id) throws IOException {
+        return new Image(new FileInputStream(id));
     }
 }

@@ -1,3 +1,6 @@
+package game2d.sound;
+
+import game2d.util.Settings;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -17,7 +20,7 @@ public class SoundController {
     HashMap<String, PlayableSound> soundMap = new HashMap<>();
     ArrayList<SoundPlayer> playing = new ArrayList<>();
 
-    SoundController() {
+    public SoundController() {
         Settings config = new Settings("config.properties");
         enabled = Boolean.parseBoolean(config.get("sound_enabled", "true"));
         if (enabled) {
@@ -33,12 +36,12 @@ public class SoundController {
 
     void newSoundEffect(String id, String uri) {
         // TODO: Error handling
-        putSound(id, new SoundEffect(getClass().getResource(uri).toExternalForm(), volume, this));
+        putSound(id, new SoundEffect(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
     }
 
     void newSound(String id, String uri) {
         // TODO: Error handling
-        putSound(id, new SoundPlayer(getClass().getResource(uri).toExternalForm(), volume, this));
+        putSound(id, new SoundPlayer(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
     }
 
     PlayableSound getSound(String id) {
@@ -51,7 +54,7 @@ public class SoundController {
         return soundMap.put(id, sound);
     }
 
-    void playSound(String id) {
+    public void playSound(String id) {
         if (enabled) {
             PlayableSound sound = getSound(id);
             sound.play();
@@ -61,7 +64,7 @@ public class SoundController {
         }
     }
 
-    void mutePlaying() {
+    public void mutePlaying() {
         if (muted) {
             for (SoundPlayer sp: playing) {
                 sp.mediaPlayer.setVolume(volume);
@@ -75,7 +78,7 @@ public class SoundController {
         }
     }
 
-    void setVolume(Double volume) {
+    public void setVolume(Double volume) {
         this.volume = volume;
     }
 }

@@ -1,6 +1,9 @@
+package game2d.core;
+
+import game2d.character.charmechanics.monsters.Monster;
+import game2d.util.shapes.Point;
 
 import java.awt.Rectangle;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -10,14 +13,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Map {
-	MapNode[][] map;
+	public MapNode[][] map;
 	ArrayList<PaintRectNode> toPaint;
 	private int MAP_WIDTH;
 	private int MAP_HEIGHT;
 
 	public Point player_starting_coords;
 	
-	ArrayList<Point> monster_coords;
+	public ArrayList<Point> monster_coords;
 	public ArrayList<Monster> mobs_in_map;
 	
 	public boolean bonus = false;//YOU'LL NEED TO EARN IT, BIATCH.
@@ -48,7 +51,7 @@ public class Map {
 							//this condition is entered during first row check to limit width
 							else if(map[y][x].checked || map[y][x].type != map[i][j].type){
 								break;
-							};//width collected
+							}//width collected
 							if(!firstRowChecked && x - j +1 > width)//Building width only within the first row
 								width = x - j +1;
 							map[y][x].checked = true;
@@ -66,7 +69,7 @@ public class Map {
 	}
 	
 	/**bitmap*/
-	Map(String filename, int next_map_index) {
+	public Map(String filename, int next_map_index) {
 		monster_coords = new ArrayList<Point>();
 		player_starting_coords = new Point();
 		
@@ -185,30 +188,6 @@ class PaintRectNode{
 	public PaintRectNode(char type, Rectangle rect) {
 		this.type = type;
 		this.rect = rect;
-	}
-}
-
-class MapNode{
-	//'G'Ground, 'A'Air, 'C'Char, 'P'Portal.
-	int r, g, b;
-	static MapNode[] mappings;
-	char type;
-	boolean checked = false;//For the RectNodes to pick every pixel properly! And yes, some of those comments are not important, they're just here for YOU to understand this code better, PROBLIM?!
-
-	MapNode(char type){
-		this.type = type;
-	}
-
-	// compared self to all nodes in `mappings` and copies type from first match
-	void identify() {
-		for (MapNode p : mappings) {
-			if (p.r == r && p.g == g && p.b == b){
-				type = p.type;
-				return;
-				//System.out.printf("r:%d, g:%d, b:%d\n", r, g, b);
-			}
-		}
-		type = '.'; // default type if no defined type is found
 	}
 }
 

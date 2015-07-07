@@ -1,3 +1,10 @@
+package game2d.core;
+
+import game2d.core.Game2d;
+import game2d.menu.GameMenu;
+import game2d.sound.SoundController;
+import game2d.util.Settings;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -24,7 +31,7 @@ public class GameWindow extends Application {
         stage.show();
     }
 
-    void startGame(Stage stage) {
+    public void startGame(Stage stage) {
         Game2d game = new Game2d(soundController);
         stage.setScene(game.scene);
     }

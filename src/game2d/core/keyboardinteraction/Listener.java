@@ -1,14 +1,13 @@
+package game2d.core.keyboardinteraction;
+
+import game2d.core.Game2d;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.HashMap;
 
-
 @SuppressWarnings("restriction")
-public class KeyboardInteraction {}
-
-@SuppressWarnings("restriction")
-class Listener {
+public class Listener {
 	private static KeyCode moveKey;
 	private static KeyCode otherKey;
 	private static boolean isHolding;
@@ -55,11 +54,4 @@ class Listener {
 		if(e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.CONTROL)//space or ctrl
 			otherKey = null;
 	}
-}
-
-/*	Interface used to define how lambdas used in keymap are to be used
-	usage: keymap.put(KeyCode.A, () -> System.out.println("'a' was pressed!"));
-*/
-interface KeyBindAction {
-	void run();
 }
