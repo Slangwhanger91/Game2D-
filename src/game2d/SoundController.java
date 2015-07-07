@@ -1,6 +1,5 @@
-package game2d.sound;
+package game2d;
 
-import game2d.util.Settings;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -27,19 +26,25 @@ public class SoundController {
             // TODO: Get volume from config?
             volume = 0.05;
             // TODO: Get sounds from config?
-            newSound("bgm", "Cold_Silence.mp3");
-            newSoundEffect("beep", "beep.wav");
+            try {
+                newSound("bgm", "Cold_Silence.mp3");
+                newSoundEffect("beep", "beep.wav");
+            } catch (NullPointerException npe) {
+                System.out.println("Error when reading sound files: turned off sound.");
+                enabled = false;
+                return;
+            }
         } else {
             return;
         }
     }
 
-    void newSoundEffect(String id, String uri) {
+    void newSoundEffect(String id, String uri) throws NullPointerException {
         // TODO: Error handling
         putSound(id, new SoundEffect(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
     }
 
-    void newSound(String id, String uri) {
+    void newSound(String id, String uri) throws NullPointerException {
         // TODO: Error handling
         putSound(id, new SoundPlayer(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
     }

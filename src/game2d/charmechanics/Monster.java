@@ -1,12 +1,9 @@
-package game2d.character.charmechanics.monsters;
+package game2d.charmechanics;
 
-import game2d.character.charmechanics.NPC;
-import game2d.character.charmechanics.PreviousStepNode;
-import game2d.core.MapNode;
-import game2d.util.SharedDataLists;
-import game2d.character.charmechanics.charstats.CharStats;
-import game2d.util.shapes.Point;
-import game2d.util.shapes.Rectangle;
+import game2d.MapNode;
+import game2d.SharedDataLists;
+import game2d.shapes.Point;
+import game2d.shapes.Rectangle;
 import javafx.scene.input.KeyCode;
 
 @SuppressWarnings("restriction")

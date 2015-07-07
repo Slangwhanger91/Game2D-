@@ -1,4 +1,4 @@
-package game2d.character.charmechanics.charstats;
+package game2d.charmechanics;
 
 public class Equipment{
 	/**

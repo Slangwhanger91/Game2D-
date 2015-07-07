@@ -1,6 +1,6 @@
-package game2d.core.keyboardinteraction;
+package game2d.keyboardinteraction;
 
-import game2d.core.Game2d;
+import game2d.Game2d;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 

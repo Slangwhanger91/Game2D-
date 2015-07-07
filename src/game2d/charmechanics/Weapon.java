@@ -1,6 +1,6 @@
-package game2d.character.charmechanics.charstats;
+package game2d.charmechanics;
 
-import game2d.util.shapes.Triangle;
+import game2d.shapes.Triangle;
 
 public class Weapon{
 

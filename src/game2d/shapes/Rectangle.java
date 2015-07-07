@@ -1,4 +1,4 @@
-package game2d.util.shapes;
+package game2d.shapes;
 
 public class Rectangle{
 	public int x, y, width, height;

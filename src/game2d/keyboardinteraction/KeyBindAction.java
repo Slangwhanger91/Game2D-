@@ -1,4 +1,4 @@
-package game2d.core.keyboardinteraction;
+package game2d.keyboardinteraction;
 
 /**
 	Interface used to define how lambdas used in keymap are to be used

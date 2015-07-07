@@ -1,4 +1,4 @@
-package game2d.character.charmechanics;
+package game2d.charmechanics;
 
 import java.util.LinkedList;
 import java.util.Queue;

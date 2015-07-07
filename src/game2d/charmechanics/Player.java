@@ -1,14 +1,11 @@
-package game2d.character.charmechanics;
+package game2d.charmechanics;
 
-import game2d.character.charmechanics.charstats.CharStats;
-import game2d.character.charmechanics.charstats.Weapon;
-import game2d.character.charmechanics.monsters.Monster;
-import game2d.core.MapNode;
-import game2d.sound.SoundController;
-import game2d.util.SharedDataLists;
-import game2d.util.shapes.Point;
-import game2d.util.shapes.Rectangle;
-import game2d.util.shapes.Triangle;
+import game2d.MapNode;
+import game2d.SoundController;
+import game2d.SharedDataLists;
+import game2d.shapes.Point;
+import game2d.shapes.Rectangle;
+import game2d.shapes.Triangle;
 import javafx.scene.input.KeyCode;
 
 @SuppressWarnings("restriction")

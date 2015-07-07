@@ -1,7 +1,7 @@
-package game2d.core;
+package game2d;
 
-import game2d.character.charmechanics.monsters.Monster;
-import game2d.util.shapes.Point;
+import game2d.charmechanics.Monster;
+import game2d.shapes.Point;
 
 import java.awt.Rectangle;
 import java.io.IOException;

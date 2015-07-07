@@ -1,7 +1,4 @@
-package game2d.menu;
-
-import game2d.core.GameWindow;
-import game2d.sound.SoundController;
+package game2d;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

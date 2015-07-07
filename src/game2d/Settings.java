@@ -1,4 +1,4 @@
-package game2d.util;
+package game2d;
 
 import java.util.Properties;
 import java.io.IOException;

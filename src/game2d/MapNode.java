@@ -1,4 +1,4 @@
-package game2d.core;
+package game2d;
 
 public class MapNode{
 	//'G'Ground, 'A'Air, 'C'Char, 'P'Portal.

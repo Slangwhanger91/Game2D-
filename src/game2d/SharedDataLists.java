@@ -1,12 +1,11 @@
-package game2d.util;
+package game2d;
 
-import game2d.character.charmechanics.charstats.CharStats;
-import game2d.character.charmechanics.charstats.GameItems;
-import game2d.character.charmechanics.monsters.Monster;
-import game2d.core.Map;
-import game2d.character.charmechanics.Player;
-import game2d.util.shapes.Point;
-import game2d.util.shapes.Rectangle;
+import game2d.charmechanics.CharStats;
+import game2d.charmechanics.GameItems;
+import game2d.charmechanics.Monster;
+import game2d.charmechanics.Player;
+import game2d.shapes.Point;
+import game2d.shapes.Rectangle;
 
 import java.util.ArrayList;
 

@@ -1,9 +1,4 @@
-package game2d.core;
-
-import game2d.core.Game2d;
-import game2d.menu.GameMenu;
-import game2d.sound.SoundController;
-import game2d.util.Settings;
+package game2d;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
