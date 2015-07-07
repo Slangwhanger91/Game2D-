@@ -1,9 +1,9 @@
 //import javafx.scene.input.KeyCode;
 
+import javafx.scene.input.KeyCode;
+
 import java.util.LinkedList;
 import java.util.Queue;
-
-import javafx.scene.input.KeyCode;
 
 
 @SuppressWarnings("restriction")
@@ -136,7 +136,7 @@ abstract class NPC{
 		}
 		return false;	
 	}
-
+	
 	protected boolean gravityMethod(KeyCode key){
 		boolean jumped = false;
 		//System.out.println("space:"+(key==' ') + ", isFlying:"+isFlying());
@@ -145,7 +145,7 @@ abstract class NPC{
 			stacked_velocity = -44;
 			jumped = true;
 		}
-
+		
 		boolean flying_or_jumped = false;
 		if(isFlying() || jumped){
 			flying_or_jumped = true;
@@ -177,13 +177,15 @@ abstract class NPC{
 				}
 			}
 		}
-
+	
 		return flying_or_jumped;
 	}
 }
 
 @SuppressWarnings("restriction")
 class Player extends NPC{
+	SoundController soundController;
+
 	private int y_coord;//camera related
 	private int x_coord;//camera related
 
@@ -212,10 +214,11 @@ class Player extends NPC{
 		stacked_velocity = -44;
 	}
 
-	Player(SharedDataLists SDL, CharStats CS){
+	Player(SharedDataLists SDL, CharStats CS, SoundController soundController){
 		init();
 		charStats = CS;
 		sharedDataLists = SDL;
+		this.soundController = soundController;
 
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(0));
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(1));
@@ -309,9 +312,9 @@ class Player extends NPC{
 	public void actions(KeyCode key){
 		if(attack_delay > 0) attack_delay--;
 		else if(key == KeyCode.CONTROL){ //ctrl (both sides)
-			sharedDataLists.add_sequence(charStats.getWeapon().getSequence());
-			attack_delay = charStats.getWeapon().getCD();
-			attack();//activate attack animation and logic
+			sharedDataLists.add_sequence(charStats.getCurrentWeaponSeq());
+			attack_delay = charStats.getWeaponCD();
+			attack();
 		}
 
 		if(attack_delay == charStats.getWeapon().getCD() -3)
@@ -389,7 +392,7 @@ class Player extends NPC{
 		//System.out.println("health: " + CharStats.getHealth()); //SHOW HEALTH
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
 	}
-
+	
 	public void buffDurations() {
 		charStats.buffsTick();
 	}
@@ -404,6 +407,7 @@ class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			sharedDataLists.new_level();
 	}
+
 
 }
 

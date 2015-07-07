@@ -28,8 +28,12 @@ public class Game2d {
 	private GraphicsContext g;
 	private Timeline gameLoop;
 
+	SoundController soundController;
+
 	/**Create the application and run it.*/
-	public Game2d() {
+	public Game2d(SoundController soundController) {
+		this.soundController = soundController;
+
 		config = new Settings("config.properties");
 		/*WINDOW_WIDTH example: Picks value from the properties file, if no such value 
 		exists "800" is taken as default instead.*/
@@ -37,7 +41,7 @@ public class Game2d {
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 		SDL = new SharedDataLists(config, new GameItems());
 		SDL.initialize_monsters();
-		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
+		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true), soundController);
 		SDL.set_actor_once(Actor);
 
 		root = new Group();
@@ -55,6 +59,8 @@ public class Game2d {
 
 		// keybindings
 		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
+		// TODO: Fix so muting works in GameWindow/GameMenu not only in Game2d..
+		Listener.keymap.put(KeyCode.O, () -> Listener.controller.muteSound());
 		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
 		Listener.keymap.put(KeyCode.DIGIT1, () -> Listener.controller.Actor.charStats.equipWeapon('1'));
 		Listener.keymap.put(KeyCode.DIGIT2, () -> Listener.controller.Actor.charStats.equipWeapon('2'));
@@ -72,11 +78,15 @@ public class Game2d {
 
 		gameLoop.play();
 	}
-	
-	private void exitGame() {
-		System.exit(0);
+
+	private void muteSound() {
+		soundController.mutePlaying();
 	}
 
+	private void exitGame() {
+         System.exit(0);
+	}
+	
 	private void pause() {
 		Listener.keymap.put(KeyCode.P,
 				() -> Listener.controller.unpause());
@@ -96,7 +106,7 @@ public class Game2d {
 	}
 
 	private final int portal_resize = 5;
-
+	
 	private void update() {
 		for(PaintRectNode PRN : SDL.map_list[SDL.map_index].toPaint){
 			switch(PRN.type){
