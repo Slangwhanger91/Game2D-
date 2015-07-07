@@ -1,3 +1,15 @@
+package game2d.core;
+
+import game2d.character.charmechanics.Player;
+import game2d.character.charmechanics.charstats.CharStats;
+import game2d.character.charmechanics.charstats.GameItems;
+import game2d.character.charmechanics.monsters.Monster;
+import game2d.core.keyboardinteraction.Listener;
+import game2d.sound.SoundController;
+import game2d.util.Settings;
+import game2d.util.SharedDataLists;
+import game2d.util.shapes.Rectangle;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
