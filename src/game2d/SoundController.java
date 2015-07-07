@@ -2,8 +2,11 @@ package game2d;
 
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +19,7 @@ public class SoundController {
     // TODO: Need better volume structure (messy down there)
     boolean muted;
     boolean enabled;
+    final String SFX_PATH = "sfx/%s";
     HashMap<String, PlayableSound> soundMap = new HashMap<>();
     ArrayList<SoundPlayer> playing = new ArrayList<>();
 
@@ -29,7 +33,7 @@ public class SoundController {
             try {
                 newSound("bgm", "Cold_Silence.mp3");
                 newSoundEffect("beep", "beep.wav");
-            } catch (NullPointerException npe) {
+            } catch (IOException ioe) {
                 System.out.println("Error when reading sound files: turned off sound.");
                 enabled = false;
                 return;
@@ -39,14 +43,19 @@ public class SoundController {
         }
     }
 
-    void newSoundEffect(String id, String uri) throws NullPointerException {
+    void newSoundEffect(String id, String uri) throws IOException {
         // TODO: Error handling
-        putSound(id, new SoundEffect(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
+        putSound(id, new SoundEffect(getStringURI(String.format(SFX_PATH, uri)), volume, this));
     }
 
-    void newSound(String id, String uri) throws NullPointerException {
+    void newSound(String id, String uri) throws IOException {
         // TODO: Error handling
-        putSound(id, new SoundPlayer(getClass().getClassLoader().getResource(uri).toExternalForm(), volume, this));
+        putSound(id, new SoundPlayer(getStringURI(String.format(SFX_PATH, uri)), volume, this));
+    }
+
+    String getStringURI(String uri) throws IOException {
+        File tmp = new File(uri);
+        return tmp.toURI().toString();
     }
 
     PlayableSound getSound(String id) {
@@ -112,19 +121,17 @@ class SoundPlayer extends PlayableSound {
     MediaPlayer mediaPlayer;
     Thread th;
 
-    SoundPlayer(String uri, double volume, SoundController master) {
+    SoundPlayer(String uri, double volume, SoundController master) throws MediaException {
         super(master);
         this.volume = volume;
         this.media = new Media(uri);
     }
 
     void play() {
-        th = new Thread(new Runnable() {
-            public void run() {
-                mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setVolume(volume);
-                mediaPlayer.setOnReady(() -> mediaPlayer.play());
-            }
+        th = new Thread(() -> {
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setVolume(volume);
+            mediaPlayer.setOnReady(() -> mediaPlayer.play());
         });
         th.start();
     }
