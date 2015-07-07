@@ -1,10 +1,7 @@
-//import javafx.scene.input.KeyCode;
-
 import javafx.scene.input.KeyCode;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
 
 @SuppressWarnings("restriction")
 public class CharMechanics {}
@@ -264,6 +261,7 @@ class Player extends NPC{
 	private void attack(){
 		float degree_a = charStats.getWeapon().getDegreeA();
 		float degree_b = charStats.getWeapon().getDegreeB();
+		soundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want spesific sounds per attack (we do)
 
 		if(degree_a - degree_b == 0){//stab
 			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
@@ -312,8 +310,8 @@ class Player extends NPC{
 	public void actions(KeyCode key){
 		if(attack_delay > 0) attack_delay--;
 		else if(key == KeyCode.CONTROL){ //ctrl (both sides)
-			sharedDataLists.add_sequence(charStats.getCurrentWeaponSeq());
-			attack_delay = charStats.getWeaponCD();
+			sharedDataLists.add_sequence(charStats.getWeapon().getSequence());
+			attack_delay = charStats.getWeapon().getCD();
 			attack();
 		}
 

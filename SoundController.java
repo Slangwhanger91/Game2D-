@@ -90,6 +90,7 @@ class SoundEffect extends PlayableSound {
     }
 
     void play() {
+        // TODO: Add a short cooldown so we don't play several soundeffects too fast(?)
         if (master.muted) return;
         clip.setVolume(master.volume);
         new Thread(() -> clip.play()).start();
