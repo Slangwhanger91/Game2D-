@@ -1,3 +1,6 @@
 [submodule "gfx"]
 	path = gfx
 	url = https://github.com/aperte/game2dgfx.git
+[submodule "sfx"]
+	path = sfx
+	url = https://github.com/aperte/game2dsfx.git
