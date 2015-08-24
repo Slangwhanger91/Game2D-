@@ -1,0 +1,5 @@
+Sprites
+Switch between menu and game
+save/load
+(do sprites first) Mobs drop items when killed
+equipment slots and items
