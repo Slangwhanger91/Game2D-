@@ -60,17 +60,17 @@ public class Game2d {
 		gameLoop.setCycleCount(Animation.INDEFINITE);
 
 		// give access to this object from Listener
-		Listener.controller = this;
+		//Listener.controller = this;
 
 		// keybindings
-		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
+		Listener.keymap.put(KeyCode.P, () -> pause());
 		// TODO: Fix so muting works in GameWindow/GameMenu not only in Game2d..
-		Listener.keymap.put(KeyCode.O, () -> Listener.controller.muteSound());
-		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
-		Listener.keymap.put(KeyCode.DIGIT1, () -> Listener.controller.Actor.charStats.equipWeapon('1'));
-		Listener.keymap.put(KeyCode.DIGIT2, () -> Listener.controller.Actor.charStats.equipWeapon('2'));
-		Listener.keymap.put(KeyCode.DIGIT3, () -> Listener.controller.Actor.charStats.equipWeapon('3'));
-		Listener.keymap.put(KeyCode.DIGIT4, () -> Listener.controller.Actor.charStats.equipWeapon('4'));
+		Listener.keymap.put(KeyCode.O, () -> muteSound());
+		Listener.keymap.put(KeyCode.ESCAPE, () -> exitGame());
+		Listener.keymap.put(KeyCode.DIGIT1, () -> Actor.charStats.equipWeapon('1'));
+		Listener.keymap.put(KeyCode.DIGIT2, () -> Actor.charStats.equipWeapon('2'));
+		Listener.keymap.put(KeyCode.DIGIT3, () -> Actor.charStats.equipWeapon('3'));
+		Listener.keymap.put(KeyCode.DIGIT4, () -> Actor.charStats.equipWeapon('4'));
 		Listener.keymap.put(KeyCode.PLUS, () -> SoundController.incrementVolume());
 		Listener.keymap.put(KeyCode.MINUS, () -> SoundController.decrementVolume());
 
@@ -96,13 +96,13 @@ public class Game2d {
 	
 	private void pause() {
 		Listener.keymap.put(KeyCode.P,
-				() -> Listener.controller.unpause());
+				() -> unpause());
 		gameLoop.pause();
 	}
 
 	private void unpause() {
 		Listener.keymap.put(KeyCode.P,
-				() -> Listener.controller.pause());
+				() -> pause());
 		gameLoop.play();
 	}
 

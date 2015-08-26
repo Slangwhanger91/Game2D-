@@ -86,7 +86,7 @@ public class Player extends NPC{
 	private void attack(){
 		float degree_a = charStats.getWeapon().getDegreeA();
 		float degree_b = charStats.getWeapon().getDegreeB();
-		SoundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want spesific sounds per attack (we do)
+		SoundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want specific sounds per attack (we do)
 
 		if(degree_a - degree_b == 0){//stab
 			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
