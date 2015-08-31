@@ -1,11 +1,14 @@
 package game2d;
 
-import game2d.charmechanics.Player;
 import game2d.charmechanics.CharStats;
 import game2d.charmechanics.GameItems;
 import game2d.charmechanics.Monster;
+import game2d.charmechanics.Player;
 import game2d.keyboardinteraction.Listener;
+import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
+
+import java.util.ArrayList;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -14,14 +17,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-
-@SuppressWarnings("restriction")
 public class Game2d {
 	private Canvas game_window;
 	private Player Actor;
@@ -36,6 +37,10 @@ public class Game2d {
 	private GraphicsContext g;
 	private Timeline gameLoop;
 
+	private SpriteSheet spriteSheet;
+	private ObjectAnimations[] objectsToAnimateArr;
+	private ObjectAnimations[] groundObjectsPerLevel;
+	
 	/**Create the application and run it.*/
 	public Game2d() {
 
@@ -47,7 +52,7 @@ public class Game2d {
 		SDL = new SharedDataLists(config, new GameItems());
 		SDL.initialize_monsters();
 		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
-		SDL.set_actor_once(Actor);
+		SDL.setActorOnce(Actor);
 
 		root = new Group();
 		scene = new Scene(root);
@@ -60,21 +65,24 @@ public class Game2d {
 		gameLoop.setCycleCount(Animation.INDEFINITE);
 
 		// give access to this object from Listener
-		//Listener.controller = this;
+		Listener.controller = this;
 
 		// keybindings
-		Listener.keymap.put(KeyCode.P, () -> pause());
+		Listener.keymap.put(KeyCode.P, () -> Listener.controller.pause());
 		// TODO: Fix so muting works in GameWindow/GameMenu not only in Game2d..
-		Listener.keymap.put(KeyCode.O, () -> muteSound());
-		Listener.keymap.put(KeyCode.ESCAPE, () -> exitGame());
-		Listener.keymap.put(KeyCode.DIGIT1, () -> Actor.charStats.equipWeapon('1'));
-		Listener.keymap.put(KeyCode.DIGIT2, () -> Actor.charStats.equipWeapon('2'));
-		Listener.keymap.put(KeyCode.DIGIT3, () -> Actor.charStats.equipWeapon('3'));
-		Listener.keymap.put(KeyCode.DIGIT4, () -> Actor.charStats.equipWeapon('4'));
+		Listener.keymap.put(KeyCode.O, () -> Listener.controller.muteSound());
+		Listener.keymap.put(KeyCode.ESCAPE, () -> Listener.controller.exitGame());
+		Listener.keymap.put(KeyCode.DIGIT1, () -> Listener.controller.Actor.charStats.equipWeapon('1'));
+		Listener.keymap.put(KeyCode.DIGIT2, () -> Listener.controller.Actor.charStats.equipWeapon('2'));
+		Listener.keymap.put(KeyCode.DIGIT3, () -> Listener.controller.Actor.charStats.equipWeapon('3'));
+		Listener.keymap.put(KeyCode.DIGIT4, () -> Listener.controller.Actor.charStats.equipWeapon('4'));
 		Listener.keymap.put(KeyCode.PLUS, () -> SoundController.incrementVolume());
+		Listener.keymap.put(KeyCode.ADD, () -> SoundController.incrementVolume());
 		Listener.keymap.put(KeyCode.MINUS, () -> SoundController.decrementVolume());
+		Listener.keymap.put(KeyCode.SUBTRACT, () -> SoundController.decrementVolume());
 
 		game_window = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 		root.getChildren().add(game_window);
 		scene.addEventHandler(KeyEvent.KEY_PRESSED,
 				event -> Listener.keyPressed(event));
@@ -82,7 +90,13 @@ public class Game2d {
 				event -> Listener.keyReleased(event));
 
 		g = game_window.getGraphicsContext2D();
-
+		
+		spriteSheet = new SpriteSheet();
+		ObjectAnimations portals = new ObjectAnimations(new Point[]{new Point(4,2), new Point(4,2), new Point(5,2), new Point(5,2), new Point(6,2), new Point(6,2), new Point(7,2), new Point(7,2)});
+		ObjectAnimations grass = new ObjectAnimations(new Point(1,2));
+		objectsToAnimateArr = new ObjectAnimations[]{portals};
+		groundObjectsPerLevel = new ObjectAnimations[]{grass};
+		
 		gameLoop.play();
 	}
 
@@ -91,80 +105,144 @@ public class Game2d {
 	}
 
 	private void exitGame() {
-         System.exit(0);
+		System.exit(0);
 	}
-	
+
 	private void pause() {
 		Listener.keymap.put(KeyCode.P,
-				() -> unpause());
+				() -> Listener.controller.unpause());
 		gameLoop.pause();
 	}
 
 	private void unpause() {
 		Listener.keymap.put(KeyCode.P,
-				() -> pause());
+				() -> Listener.controller.pause());
 		gameLoop.play();
 	}
 
 	private void reset() {
 		//System.out.println("reset");
-		g.setFill(Color.WHITE);
-		g.fillRect(0, 0, game_window.getWidth(), game_window.getHeight());
+		//g.setFill(Color.WHITE);
+		//g.fillRect(0, 0, game_window.getWidth(), game_window.getHeight());
+		g.drawImage(spriteSheet.getBackground(), 0.0, 0.0, (double)WINDOW_WIDTH, (double)WINDOW_HEIGHT);
 	}
 
 	private final int portal_resize = 5;
-	
+
 	private void update() {
+		ImageView iv;
+		
+		//clear previous images
+				for (int i = root.getChildren().size() -1; root.getChildren().size() > 1; i--) {
+					root.getChildren().remove(i);
+				}
+		
 		for(PaintRectNode PRN : SDL.map_list[SDL.map_index].toPaint){
 			switch(PRN.type){
 			case 'G':
-				g.setFill(Color.GREEN);
+				/*g.setFill(Color.GREEN);
 				g.fillRect(PRN.rect.x - Actor.xCoord(),
 						PRN.rect.y - Actor.yCoord(), PRN.rect.width,
-						PRN.rect.height);
+						PRN.rect.height);*/
+				iv = spriteSheet.grabImage(groundObjectsPerLevel[0].getImagePt());//TODO change 0 to be variable as per level
+				root.getChildren().add(iv);
+				iv.setTranslateX(PRN.rect.x - Actor.xCoord());
+				iv.setTranslateY(PRN.rect.y - Actor.yCoord());
+				iv.setFitWidth(PRN.rect.width);
+				iv.setFitHeight(PRN.rect.height);
+				
 				break;
 			case 'P':
-				g.setFill(Color.YELLOW);
+				/*g.setFill(Color.YELLOW);
 				g.fillOval(PRN.rect.x - Actor.xCoord() - portal_resize,
 						PRN.rect.y - Actor.yCoord() - portal_resize,
 						PRN.rect.width + (portal_resize*2),
-						PRN.rect.height + (portal_resize*2));
-				break;
+						PRN.rect.height + (portal_resize*2));*/
+				
+				iv = spriteSheet.grabImage(objectsToAnimateArr[0].getImagePt());
+				//maybe hash map this to avoid using a dubious constant to reach the portals
+				//(or any other specific) animations?
+				
+				root.getChildren().add(iv);
+				iv.setTranslateX(PRN.rect.x - Actor.xCoord() - portal_resize);
+				iv.setTranslateY(PRN.rect.y - Actor.yCoord() - portal_resize);
+				iv.setFitWidth(PRN.rect.width + (portal_resize*2));
+				iv.setFitHeight(PRN.rect.height + (portal_resize*2));
 			}
 		}
-		//
+
+		
+
 		//painting characters/creatures(not actor)
 		g.setFill(Color.MAGENTA);//why's purple called "magneta", who knows..
 		for(Monster MOB : SDL.map_list[SDL.map_index].mobs_in_map){
 			Rectangle R = MOB.shape;
-			g.fillRect(R.x - Actor.xCoord(), R.y - Actor.yCoord(),
-					R.width, R.height);
+			/*g.fillRect(R.x - Actor.xCoord(), R.y - Actor.yCoord(),
+					R.width, R.height);*/
+			iv = spriteSheet.grabImage(MOB.getCurrentImagePt());
+			root.getChildren().add(iv);
+			iv.setTranslateX(R.x - Actor.xCoord());
+			iv.setTranslateY(R.y - Actor.yCoord());
 		}
+
 		//
 		//painting main character
-		if(Actor.charStats.isImmune()) g.setFill(Color.RED);
+		/*if(Actor.charStats.isImmune()) g.setFill(Color.RED);
 		else g.setFill(Color.BLACK);
 		g.fillRect(Actor.shape.x - Actor.xCoord(),
-				Actor.shape.y - Actor.yCoord(), Actor.width, Actor.height);
+				Actor.shape.y - Actor.yCoord(), Actor.width, Actor.height);*/
+		iv = spriteSheet.grabImage(Actor.getCurrentImagePt());
+		root.getChildren().add(iv);
+		iv.setTranslateX(Actor.shape.x - Actor.xCoord());
+		iv.setTranslateY(Actor.shape.y - Actor.yCoord() - 10);
+
+		if(Actor.charStats.isImmune()){
+			iv = spriteSheet.grabImage(Actor.getGoreImage());
+			root.getChildren().add(iv);
+			iv.setTranslateX(Actor.shape.x - Actor.xCoord());
+			iv.setTranslateY(Actor.shape.y - Actor.yCoord() - 10);
+		}
 		//
 		//weapon related animations:
-		g.setFill(Color.BLUE);
+
+		/*g.setFill(Color.BLUE);
 		if(Actor.charStats.getWeapon().getDegreeA() != 0)
 			g.setFill(Color.YELLOW);//testing weapon switch
-		ArrayList<Integer> seq;
+		 */
+
+		//add and reposition new images
+		ArrayList<Point> seq;
 		for (int i = 0; i < SDL.image_sequences.size(); i++) {
 			seq = SDL.image_sequences.get(i);
+			iv = spriteSheet.grabImage(seq.remove(0));
+			root.getChildren().add(iv);
+			iv.setTranslateY(Actor.shape.y - Actor.yCoord() -25);
 			
+			iv.setFitWidth(64);
+			iv.setFitHeight(64);
 			if(Actor.getFacing() == 'd'){//right
-				g.fillRect(Actor.shape.x - Actor.xCoord() + Actor.width,
+				/*g.fillRect(Actor.shape.x - Actor.xCoord() + Actor.width,
 						Actor.shape.y - Actor.yCoord() + Actor.height/2,
-						seq.remove(0), 2);
+						seq.remove(0), 2);*/
+				/*g.drawImage(image, 
+						(double)(Actor.shape.x - Actor.xCoord() + Actor.width), 
+						(double)(Actor.shape.y - Actor.yCoord() + Actor.height/2));*/
+				//ImageView iv = spriteSheet.grabImage(seq.remove(0));
 
+				iv.setTranslateX(Actor.shape.x - Actor.xCoord() + Actor.width);
+				//System.out.println(root.getChildren().size());
 			}else{//left
-				int img = seq.remove(0);
+				/*Image img = seq.remove(0);
 				g.fillRect(Actor.shape.x - Actor.xCoord() - img,
 						Actor.shape.y - Actor.yCoord() + Actor.height/2,
-						img, 2);
+						img, 2);*/
+				/*int image_width = (int)(image.getWidth());
+				g.drawImage(image, 
+						(double)(Actor.shape.x - Actor.xCoord() - image_width), 
+						(double)(Actor.shape.y - Actor.yCoord() + Actor.height/2));*/
+
+				iv.setTranslateX(Actor.shape.x - Actor.xCoord() - 60);//image width = 32
+				iv.setScaleX(-1);
 			}
 
 			if(seq.isEmpty())

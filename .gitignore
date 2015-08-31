@@ -6,7 +6,6 @@ out/
 *.wav
 .stfolder
 .stignore
-build/
 *.swp
 
 # Mobile Tools for Java (J2ME)

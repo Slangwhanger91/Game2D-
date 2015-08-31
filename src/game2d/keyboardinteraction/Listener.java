@@ -1,5 +1,6 @@
 package game2d.keyboardinteraction;
 
+import game2d.Game2d;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -10,6 +11,7 @@ public class Listener {
 	private static KeyCode moveKey;
 	private static KeyCode otherKey;
 	private static boolean isHolding;
+	public static Game2d controller;
 	public static HashMap<KeyCode, KeyBindAction> keymap = new HashMap<>();
 
 	public Listener(){
@@ -29,7 +31,7 @@ public class Listener {
 	public static void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
 		//System.out.println(e.getCode().ordinal());
-		if(e.getCode() == KeyCode.A || e.getCode() == KeyCode.D){
+		if(e.getCode() == KeyCode.A || e.getCode() == KeyCode.D){//'a', 'd'
 			//	System.out.println("holding:"+isHolding);
 			if(moveKey != null && moveKey != e.getCode())
 				isHolding = true;

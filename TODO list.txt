@@ -1,4 +1,3 @@
-Sprites
 Switch between menu and game
 save/load
 (do sprites first) Mobs drop items when killed

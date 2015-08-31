@@ -3,12 +3,12 @@ package game2d.charmechanics;
 import game2d.MapNode;
 import game2d.SharedDataLists;
 import game2d.SoundController;
+import game2d.charmechanics.NPC.ActionImage;
 import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
 import game2d.shapes.Triangle;
 import javafx.scene.input.KeyCode;
 
-@SuppressWarnings("restriction")
 public class Player extends NPC{
 
 	private int y_coord;//camera related
@@ -28,6 +28,45 @@ public class Player extends NPC{
 	public void setCoords(int x, int y){
 		x_coord = x;
 		y_coord = y;
+	}
+
+	private Point[][] images_to_grab = {
+			//standing (0)
+			{new Point(2,0), new Point(2,0), new Point(2,0), new Point(2,0), new Point(2,0), new Point(2,0)},
+			//walking right (1)
+			{new Point(4,0), new Point(4,0), new Point(5,0), new Point(5,0), new Point(6,0), new Point(6,0)},
+			//jumping (2)
+			{new Point(7,0), new Point(7,0), new Point(7,0), new Point(7,0), new Point(7,0), new Point(7,0)},
+			//walking left (3)
+			{new Point(2,1), new Point(2,1), new Point(3,1), new Point(3,1), new Point(4,1), new Point(4,1)},
+			//taking damage - immunity (4)
+			{new Point(3,0), new Point(3,0), new Point(3,0), new Point(3,0), new Point(3,0), new Point(3,0)},
+			//attack right (5)
+			{new Point(2,2)},
+			//attack left (6)
+			{new Point(3,2)}
+	};
+
+	public Point getCurrentImagePt(){
+		sequence = ++sequence % 6;
+
+		switch(current_action){
+		case STANDING: 
+			return images_to_grab[0][sequence];
+		case WALKING:
+			if(getFacing() == 'd') return images_to_grab[1][sequence];//right
+			else return images_to_grab[3][sequence];//left
+		case JUMPING:
+			return images_to_grab[2][sequence];
+		case ATTACKING:
+			if(getFacing() == 'd') return images_to_grab[5][0];//right
+			else return images_to_grab[6][0];//left
+		default: return null; //shouldn't happen!
+		}
+	}
+
+	public Point getGoreImage(){
+		return new Point(3, 0);
 	}
 
 	public void init(){
@@ -86,9 +125,11 @@ public class Player extends NPC{
 	private void attack(){
 		float degree_a = charStats.getWeapon().getDegreeA();
 		float degree_b = charStats.getWeapon().getDegreeB();
-		SoundController.playSound("beep"); // TODO: Replace with attack sound, put into stableft instead if we want specific sounds per attack (we do)
+
+		setCurrentActionImage(ActionImage.ATTACKING);
 
 		if(degree_a - degree_b == 0){//stab
+			SoundController.playSound("stab");
 			for (Monster M : sharedDataLists.map_list[sharedDataLists.map_index].mobs_in_map) {
 				int weapon_y_axis = this.shape.y + this.height/2;
 				boolean within_y = (M.shape.y <= weapon_y_axis)
@@ -101,6 +142,7 @@ public class Player extends NPC{
 				}
 			}
 		}else{//slash
+			SoundController.playSound("slash");
 			Triangle triangular_area;
 			Weapon W = charStats.getWeapon();
 			int actor_x, actor_y = shape.y + shape.height/2;
@@ -148,11 +190,17 @@ public class Player extends NPC{
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public void movement(KeyCode key) {
-		if (key == null) return;
+		if (key == null){
+			if(attack_delay == 0)
+				setCurrentActionImage(ActionImage.STANDING);	
+			return;
+		}
 
 		final int SPEED = speed;
 		int hill_tolerance;
 		MapNode[][] MN = sharedDataLists.map_list[sharedDataLists.map_index].map;
+		if(attack_delay == 0)
+		setCurrentActionImage(ActionImage.WALKING);
 
 		switch(key){
 		case A:

@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import game2d.SoundController;
+
 /**
  * Created by crab people and others on 29.06.2015.
  * Class responsible for displaying a menu for the game.
