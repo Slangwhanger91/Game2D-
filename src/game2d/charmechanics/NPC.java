@@ -2,10 +2,10 @@ package game2d.charmechanics;
 
 import game2d.MapNode;
 import game2d.SharedDataLists;
+import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
 import javafx.scene.input.KeyCode;
 
-@SuppressWarnings("restriction")
 public abstract class NPC{
 	public Rectangle shape;
 	protected int speed;//movement speed
@@ -23,7 +23,23 @@ public abstract class NPC{
 	public abstract void movement(KeyCode key);
 	public abstract void gravity(KeyCode key);
 
-	public boolean isFlying(){
+	protected int sequence = 0;
+	protected ActionImage current_action = ActionImage.STANDING;
+	//private Point[][] images_to_grab; 
+	//check
+	protected boolean ground_below;
+
+	public enum ActionImage{
+		STANDING, WALKING, JUMPING, ATTACKING
+	}
+
+	public abstract Point getCurrentImagePt();
+
+	public void setCurrentActionImage(ActionImage action_image){
+		current_action = action_image;
+	}
+
+	protected boolean isFlying(){
 		for (int i = 0; i <= width; i+=3) {
 			if(sharedDataLists.map_list[sharedDataLists.map_index].map[shape.y + height +1][shape.x + i].type != 'A')
 				return false;
@@ -120,25 +136,31 @@ public abstract class NPC{
 			stacked_velocity = -44;
 			jumped = true;
 		}
-
+		//if(this.charStats.isPlayer())System.out.println("SV: "+stacked_velocity);
 		boolean flying_or_jumped = false;
 		if(isFlying() || jumped){
 			flying_or_jumped = true;
 			int g = 0;
 			MapNode[][] MN = sharedDataLists.map_list[sharedDataLists.map_index].map;//to reduce code size...
 			if(velocity > 0){//Falling.
-				boolean ground_below;
 				while(g < velocity){
 					ground_below = false;
 					for (int i = 0; i <= width && !ground_below; i+=3) {
 						if(MN[shape.y + height + g][shape.x + i].type != 'A')
 							ground_below = true;
 					}
-					if(ground_below) velocity = g;
+					if(ground_below){
+						velocity = g;
+						setCurrentActionImage(ActionImage.WALKING);
+					}
 					//else g +=4; //buggy but efficient, needs a fix
-					else g++;
+					else{
+						g++;
+						setCurrentActionImage(ActionImage.JUMPING);
+					}
 				}
 			}else{//Flying.
+				setCurrentActionImage(ActionImage.JUMPING);
 				boolean ceiling_above;
 				while(g > velocity){
 					ceiling_above = false;
@@ -151,7 +173,7 @@ public abstract class NPC{
 					else g--;
 				}
 			}
-		}
+		}	
 
 		return flying_or_jumped;
 	}
