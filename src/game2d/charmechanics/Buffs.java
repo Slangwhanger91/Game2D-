@@ -10,11 +10,12 @@ public class Buffs{
 	private int immunity;
 	//TODO: add poisons, power-ups, health extensions, speed etc..
 
+	/**Amount of frames where you're immune.*/
 	public Buffs(){
-		immunity = 0;//amount of frames where you're immune
+		immunity = 0;
 	}
-
-	public void defaultImmunityOnHit(){//reset
+	/**Reset*/
+	public void defaultImmunityOnHit(){
 		immunity = 30;
 	}
 

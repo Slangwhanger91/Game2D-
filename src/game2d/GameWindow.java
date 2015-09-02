@@ -3,7 +3,6 @@ package game2d;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-@SuppressWarnings("restriction")
 public class GameWindow extends Application {
 
     @Override

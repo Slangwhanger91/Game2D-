@@ -1,11 +1,14 @@
 package game2d.charmechanics;
 
+import game2d.SoundController;
+
 import java.util.ArrayList;
 
 public class CharStats {
 	private ArrayList<Weapon> weapons;
 	private Weapon current_weapon;
 	private int weapon_index;//weapon slot
+	private int weapon_limit = 4;
 	private Buffs buffs;
 
 	private int max_health;
@@ -21,6 +24,10 @@ public class CharStats {
 
 	private boolean player;
 
+	private double roll;
+	private Equipment[] available_equipment;
+	private Weapon[] available_weapons;
+
 	private void isAliveCheck(){
 		if(health <= 0) alive = false;
 	}
@@ -33,21 +40,58 @@ public class CharStats {
 	public Weapon getWeapon(){ return current_weapon; }
 
 	public CharStats(String name, int max_health, int max_mana, int armor, 
-			int base_damage, boolean is_player) {
+			int base_damage) {
+		this.player = false;
 		this.name = name;
-		health = this.max_health = max_health;
-		mana = this.max_mana = max_mana;
+		this.health = this.max_health = max_health;
+		this.mana = this.max_mana = max_mana;
 		this.armor = armor;
 		this.attack_damage = base_damage;
-		player = is_player;
-		weapons = new ArrayList<Weapon>();
-		buffs = new Buffs();
+		this.weapons = new ArrayList<Weapon>();
+		this.buffs = new Buffs();
+	}
+
+	public void setToPlayer(){
+		player = true;
+	}
+
+	public void instantiateLoot(double drop_chance_multiplier, 
+			Equipment[] available_equipment, Weapon[] available_weapons){
+		this.roll = Math.random() * drop_chance_multiplier;
+		this.available_equipment = available_equipment;
+		this.available_weapons = available_weapons;
+	}
+
+	public void rollForDrops(NPC npc){
+		if(available_equipment != null && available_weapons != null){
+			double item_choice = Math.random();
+			if(item_choice > 0.5){//go with equipment
+
+			} else{//weapons
+
+			}
+		} else if(available_weapons != null){
+			npc.sharedDataLists.addWeaponDrop(npc, available_weapons[0]);
+		} else{
+
+		}
+	}
+
+	private void setWeaponDrop(Weapon weapon){
+
+	}
+
+	private void setEquipmentDrop(Equipment equipment){
+
 	}
 
 	/**Percentage based hit, not effected by armor.*/
 	public void fallingDamage(int stacked_velocity){
 		if(stacked_velocity > 0){
 			health -= ((max_health * stacked_velocity) / 100);
+			System.out.println("health: "+health+", max health: "+max_health+ ", stacked v: " + stacked_velocity);
+			if(Math.random() > 0.5) SoundController.playSound("AAA2");
+			else SoundController.playSound("AAA3");
 			System.out.println("HP: "+health);
 		}
 		isAliveCheck();
@@ -68,8 +112,10 @@ public class CharStats {
 
 	/**Take physical damage(effected by armor).*/
 	private void takingDamage(int raw_hit){
-		if(armor <= raw_hit)
+		if(armor <= raw_hit){
+			SoundController.playSound("AAA");
 			health = health - (raw_hit - armor);
+		}
 		isAliveCheck();
 	}
 
@@ -79,12 +125,24 @@ public class CharStats {
 		CS.takingDamage(this);
 	}
 
+	public boolean isWeaponSlotAvailable(){
+		return weapons.size() < weapon_limit;
+	}
+	
 	/**Fill an empty weapon slot.*/
 	public void obtainWeapon(Weapon W){
 		//System.out.println("CHECK");
-		if(!weapons.contains(W) && weapons.size() < 4){//amount of weapons limit
+		if(!weapons.contains(W)){//amount of weapons limit
 			weapons.add(W);
 		}
+	}
+
+	public void replaceCurrentWeapon(){
+		//TODO
+	}
+	
+	public void dropCurrentWeapon(){
+		//TODO
 	}
 
 	/**Throw current weapon and replace with one on the ground.*/
@@ -96,7 +154,7 @@ public class CharStats {
 		weapons.set(weapon_index, current_weapon);
 
 	}
-	
+
 	/**Select from obtained weapons. Currently limited to 4 slots*/
 	public void equipWeapon(char key){//'1','2','3','4'
 		Weapon W = null;
@@ -132,7 +190,7 @@ public class CharStats {
 		}
 		current_weapon = W;
 		attack_damage += current_weapon.getDamage();
-		
+
 		System.out.println("You're now equipping " + current_weapon.getName());
 	}
 

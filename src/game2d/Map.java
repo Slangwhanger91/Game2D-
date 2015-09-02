@@ -28,6 +28,14 @@ public class Map {
 	/** represents the index of the next map, if for any reason
 	 * that index is none, the value should be <b>-1</b>*/
 	public int next_map_index;
+	
+	public int getWidth(){
+		return MAP_WIDTH;
+	}
+	
+	public int getHeight(){
+		return MAP_HEIGHT;
+	}
 
 	private void build_toPaint(){//Might be messy, but it's only done once every map we load :P
 		toPaint = new ArrayList<PaintRectNode>();

@@ -3,7 +3,6 @@ package game2d.charmechanics;
 import game2d.MapNode;
 import game2d.SharedDataLists;
 import game2d.SoundController;
-import game2d.charmechanics.NPC.ActionImage;
 import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
 import game2d.shapes.Triangle;

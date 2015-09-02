@@ -6,22 +6,27 @@ import game2d.shapes.Point;
 import game2d.shapes.Rectangle;
 import javafx.scene.input.KeyCode;
 
-@SuppressWarnings("restriction")
 public class Monster extends NPC {
 
 	private KeyCode movementDirection = null;
 
+	private Point[][] images_to_grab = {
+			//standing (0)
+			{new Point(0,2)}
+	};
+	
 	/**
-	 * @param SDL - connection with the map
-	 * @param CS - stats
+	 * @param sharedDataLists - connection with the map
+	 * @param charStats - stats
 	 * @param index - retrieves index from <b>monster_coords</b> ArrayList
 	 */
-	public Monster(SharedDataLists SDL, CharStats CS, int index){
+	public Monster(SharedDataLists sharedDataLists, CharStats charStats, 
+			int index){
 		init();
-		charStats = CS; //create a new one with relevance to the level
-		sharedDataLists = SDL;
+		this.charStats = charStats; //create a new one with relevance to the level
+		this.sharedDataLists = sharedDataLists;
 		//mob coordinates
-		Point mc = sharedDataLists.map_list[sharedDataLists.map_index].monster_coords.get(index);
+		Point mc = this.sharedDataLists.map_list[this.sharedDataLists.map_index].monster_coords.get(index);
 		shape = new Rectangle(mc.x, mc.y, width, height);
 	}
 
@@ -131,6 +136,12 @@ public class Monster extends NPC {
 		width = 12;//buttom/top hitbox split into 4
 		velocity = 0;
 		previous_step = new PreviousStepNode();
+		
+	}
+
+	@Override
+	public Point getCurrentImagePt() {
+		return images_to_grab[0][0];
 	}
 
 }

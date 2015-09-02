@@ -10,9 +10,11 @@ public class Equipment{
 	 * <br>5: ring*/
 	private int slot;
 	private String name;
-
-	public Equipment(String name, int slot){
+	private double drop_chance;
+	
+	public Equipment(String name, int slot, double drop_chance){
 		this.name = name;
 		this.slot = slot;
+		this.drop_chance = drop_chance;
 	}
 }

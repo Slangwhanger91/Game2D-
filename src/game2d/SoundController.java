@@ -11,20 +11,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by aperte on 06.07.2015.
+ * Created by ominous yet charismatic tuna salad on 06.07.2015.
  */
 public final class SoundController {
     // TODO: Add sfxvolume, bgvolume, voicevolume
-    static double volume;
+    public static double volume;
     // TODO: Need better volume structure (messy down there)
-    static boolean muted;
-    static boolean enabled;
-    static double volumeIncrementValue = 0.05;
-    static final String SFX_PATH = "sfx/%s";
-    static HashMap<String, PlayableSound> soundMap = new HashMap<>();
-    static ArrayList<SoundPlayer> playing = new ArrayList<>();
+    public static boolean muted;
+    
+    private static boolean enabled;
+    private static double volumeIncrementValue = 0.05;
+    private static final String SFX_PATH = "sfx/%s";
+    private static HashMap<String, PlayableSound> soundMap = new HashMap<>();
+    private static ArrayList<SoundPlayer> playing = new ArrayList<>();
 
-    static void init() {
+    public static void init() {
         Settings config = new Settings("config.properties");
         enabled = Boolean.parseBoolean(config.get("sound_enabled", "true"));
         if (enabled) {
@@ -34,6 +35,11 @@ public final class SoundController {
             try {
                 newSound("bgm", "Cold_Silence.mp3");
                 newSoundEffect("beep", "beep.wav");
+                newSoundEffect("slash", "slash.wav");
+                newSoundEffect("stab", "stab.wav");
+                newSoundEffect("AAA", "AAA.wav");
+                newSoundEffect("AAA2", "AAA2.wav");
+                newSoundEffect("AAA3", "AAA3.wav");
             } catch (Exception e) {
                 // TODO: Fix error handling ..
                 System.out.println("Error when reading sound files: turned off sound.");
@@ -46,32 +52,32 @@ public final class SoundController {
         System.out.println("Sound initiated and enabled!"); // TODO: Change to LOGMSG.
     }
 
-    static void newSoundEffect(String id, String uri) throws IOException {
+    private static void newSoundEffect(String id, String uri) throws IOException {
         // TODO: Error handling
         putSound(id, new SoundEffect(getStringURI(String.format(SFX_PATH, uri))));
     }
 
-    static void newSound(String id, String uri) throws IOException {
+    private static void newSound(String id, String uri) throws IOException {
         // TODO: Error handling
         putSound(id, new SoundPlayer(getStringURI(String.format(SFX_PATH, uri))));
     }
 
-    static String getStringURI(String uri) throws IOException {
+    private static String getStringURI(String uri) throws IOException {
         File tmp = new File(uri);
         return tmp.toURI().toString();
     }
 
-    static PlayableSound getSound(String id) {
+    private static PlayableSound getSound(String id) {
         // TODO: Error handling
         return soundMap.get(id);
     }
 
-    static PlayableSound putSound(String id, PlayableSound sound) {
+    private static PlayableSound putSound(String id, PlayableSound sound) {
         // TODO: Error handling
         return soundMap.put(id, sound);
     }
 
-    static public void playSound(String id) {
+    public static void playSound(String id) {
         if (enabled) {
             PlayableSound sound = getSound(id);
             sound.play();
@@ -116,10 +122,12 @@ public final class SoundController {
     }
 }
 
-/* Class for playing AudioClips, ment for short sounds with no control - fire and forget. */
+/** Class for playing AudioClips, ment for short sounds with no control - fire and forget. */
+@SuppressWarnings("restriction")
 class SoundEffect extends PlayableSound {
-    AudioClip clip;
-
+	
+    private AudioClip clip;
+    
     SoundEffect(String uri) {
         this.clip = new AudioClip(uri);
     }
@@ -133,9 +141,11 @@ class SoundEffect extends PlayableSound {
 
 }
 
-/* Class for playing Media sound, ment for longer sounds with control possible. */
+/** Class for playing Media sound, ment for longer sounds with control possible. */
+@SuppressWarnings("restriction")
 class SoundPlayer extends PlayableSound {
-    Media media;
+	
+	Media media;
     MediaPlayer mediaPlayer;
     Thread th;
 
