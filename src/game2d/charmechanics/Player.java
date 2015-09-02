@@ -81,8 +81,10 @@ public class Player extends NPC{
 	public Player(SharedDataLists SDL, CharStats CS) {
 		init();
 		charStats = CS;
+		charStats.setToPlayer();
 		sharedDataLists = SDL;
-
+		
+		
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(0));
 		charStats.obtainWeapon(sharedDataLists.gameItems.getWeaponIndex(1));
 		charStats.equipWeapon('1');
@@ -252,14 +254,14 @@ public class Player extends NPC{
 				y_coord += velocity;
 			if(velocity < 14)
 				velocity += 2;
-			if(velocity > 0)
+			if(velocity > 0 && !ground_below)
 				stacked_velocity += 2;
 		}else{
 			velocity = 6;//constant falling speed
 			charStats.fallingDamage(stacked_velocity);
 			stacked_velocity = -44;
 		}
-		someNextLevelCheckWow();//much wow very next level
+		checkForPortals();//much wow very next level
 		//System.out.println("health: " + CharStats.getHealth()); //SHOW HEALTH
 		//System.out.println("y:"+(shape.y + height) + ", type:" + Map.map[shape.y + height][shape.x].type);
 	}
@@ -268,7 +270,7 @@ public class Player extends NPC{
 		charStats.buffsTick();
 	}
 
-	private void someNextLevelCheckWow(){
+	private void checkForPortals(){
 		MapNode[][] MN = sharedDataLists.map_list[sharedDataLists.map_index].map;//fucking code size
 		if(MN[shape.y - 3][shape.x - 3].type == 'P'
 				|| MN[shape.y - 3][shape.x + width + 3].type == 'P'
@@ -277,6 +279,16 @@ public class Player extends NPC{
 				|| MN[shape.y + (height / 2)][shape.x + width + 5].type == 'P'
 				|| MN[shape.y + (height / 2)][shape.x - 5].type == 'P')
 			sharedDataLists.new_level();
+	}
+	
+	public void checkForItems(KeyCode key){
+		if(key == KeyCode.E || charStats.isWeaponSlotAvailable()){
+			searchForItemsAroundActor();
+		}
+	}
+	
+	private void searchForItemsAroundActor(){
+		sharedDataLists.getDroppedWeaponsList();
 	}
 
 

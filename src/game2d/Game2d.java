@@ -1,6 +1,7 @@
 package game2d;
 
 import game2d.charmechanics.CharStats;
+import game2d.charmechanics.DroppedWeaponPackage;
 import game2d.charmechanics.GameItems;
 import game2d.charmechanics.Monster;
 import game2d.charmechanics.Player;
@@ -51,7 +52,7 @@ public class Game2d {
 		WINDOW_HEIGHT = Integer.parseInt(config.get("height", "600"));
 		SDL = new SharedDataLists(config, new GameItems());
 		SDL.initialize_monsters();
-		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1, true));
+		Actor = new Player(SDL, new CharStats("Playa", 100, 30, 0, 1));
 		SDL.setActorOnce(Actor);
 
 		root = new Group();
@@ -124,7 +125,11 @@ public class Game2d {
 		//System.out.println("reset");
 		//g.setFill(Color.WHITE);
 		//g.fillRect(0, 0, game_window.getWidth(), game_window.getHeight());
-		g.drawImage(spriteSheet.getBackground(), 0.0, 0.0, (double)WINDOW_WIDTH, (double)WINDOW_HEIGHT);
+
+		//wtb bigger images I guess??! or more flexible math to avoid reaching void spots
+		//f.e second map on the right edge
+		g.drawImage(spriteSheet.getBackground(), -Actor.xCoord()/2 -150, -Actor.yCoord()/2 -50, 
+				SDL.map_list[SDL.map_index].getWidth() +250, SDL.map_list[SDL.map_index].getHeight() +100);
 	}
 
 	private final int portal_resize = 5;
@@ -172,7 +177,19 @@ public class Game2d {
 		}
 
 		
-
+		//paint dropped items
+		ArrayList<DroppedWeaponPackage> DWP_list = SDL.getDroppedWeaponsList();
+		for(DroppedWeaponPackage DWP : DWP_list){
+			iv = spriteSheet.grabImage(DWP.getImage());
+			root.getChildren().add(iv);
+			iv.setTranslateX(DWP.getX() - Actor.xCoord());
+			iv.setTranslateY(DWP.getY() - Actor.yCoord() + DWP.getYPosition());
+			iv.setFitWidth(50);
+			iv.setFitHeight(50);		
+		}
+		//TODO equipemtn
+		
+		
 		//painting characters/creatures(not actor)
 		g.setFill(Color.MAGENTA);//why's purple called "magneta", who knows..
 		for(Monster MOB : SDL.map_list[SDL.map_index].mobs_in_map){
@@ -255,6 +272,7 @@ public class Game2d {
 		//Actor actions:
 		Actor.movement(Listener.get_moveKey());
 		Actor.gravity(Listener.get_otherKey());
+		Actor.checkForItems(Listener.get_otherKey());
 		Actor.actions(Listener.get_otherKey());
 		Actor.buffDurations();
 		//System.out.println("x coords: " + Actor.x_coord);
@@ -267,6 +285,8 @@ public class Game2d {
 				mobs.get(i).AI_movement();
 				mobs.get(i).AI_gravity();
 			} else {
+				mobs.get(i).charStats.rollForDrops(mobs.get(i));
+				System.out.println("rolling");
 				mobs.remove(i);
 			}
 		}
